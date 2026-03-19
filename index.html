@@ -1,275 +1,356 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FENIX | Sovereign Command</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FENIX | Sovereign Digital Empire</title>
     
-    <!-- CDNs -->
+    <!-- TIER 1 LIBRARIES -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syncopate:wght@400;700&display=swap');
 
-        :root { --bg: #000000; --accent: #ffffff; }
-        body { background: var(--bg); color: white; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
+        :root {
+            --bg: #000000;
+            --accent: #ffffff;
+            --glass: rgba(255, 255, 255, 0.02);
+            --border: rgba(255, 255, 255, 0.08);
+        }
 
+        body {
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+            margin: 0; padding: 0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* LIQUID CHROME LOGO */
         .liquid-chrome {
-            background: linear-gradient(90deg, #888, #fff, #888);
+            font-family: 'Syncopate', sans-serif;
+            background: linear-gradient(90deg, #555, #fff, #555);
             background-size: 200% auto;
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            animation: shine 3s linear infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: chromeAnim 4s linear infinite;
         }
-        @keyframes shine { to { background-position: 200% center; } }
+        @keyframes chromeAnim { to { background-position: 200% center; } }
 
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(40px) saturate(150%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        /* INTERACTIVE GLASS */
+        .glass-terminal {
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid var(--border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        /* Prevent background clicks when modal is open */
-        .modal-active { overflow: hidden; }
+        /* 3D CANVAS LAYER */
+        #canvas-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+        
+        /* NOISE GRAIN */
+        .noise { position: fixed; inset: 0; z-index: 1; opacity: 0.02; pointer-events: none; background: url('https://grainy-gradients.vercel.app/noise.svg'); }
 
-        #three-canvas { position: fixed; top: 0; left: 0; z-index: -1; pointer-events: none; }
-        
-        .btn-active:active { transform: scale(0.95); }
-        
+        /* BUTTON HARDENING */
+        .interactive {
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            position: relative;
+            z-index: 50;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .interactive:active { transform: scale(0.95); }
+
+        /* BIOMETRIC SCANNER */
         .scan-line {
-            width: 100%; height: 2px; background: #fff;
-            position: absolute; top: 0; animation: scan 2s infinite;
+            width: 100%; height: 2px; background: white;
+            box-shadow: 0 0 20px white;
+            position: absolute; top: 0;
+            animation: scanning 2s ease-in-out infinite;
         }
-        @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
+        @keyframes scanning { 0%, 100% { top: 0%; } 50% { top: 100%; } }
 
-        /* Command Center Animation */
-        #command-center {
+        /* CUSTOM CURSOR */
+        #cursor-dot { width: 8px; height: 8px; background: white; border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; }
+        #cursor-outline { width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.15s ease-out; }
+
+        /* DASHBOARD ANIMATION */
+        #os-interface {
             transform: translateY(100%);
-            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        #command-center.open { transform: translateY(0%); }
+        #os-interface.active { transform: translateY(0%); }
+
+        .hide { display: none !important; }
+        ::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="bg-black">
+<body class="selection:bg-white selection:text-black">
 
-    <canvas id="three-canvas"></canvas>
+    <div id="cursor-dot"></div>
+    <div id="cursor-outline"></div>
+    <div class="noise"></div>
+    <canvas id="canvas-bg"></canvas>
 
-    <!-- 1. BIOMETRIC GATE -->
-    <div id="gate" class="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center">
-        <div class="relative w-24 h-24 mb-6 border border-white/20 rounded-full flex items-center justify-center overflow-hidden">
-            <i data-lucide="fingerprint" class="w-10 h-10 text-white/50"></i>
+    <!-- [1] BIOMETRIC ENTRY GATE -->
+    <div id="gate" class="fixed inset-0 z-[1000] bg-black flex flex-col items-center justify-center">
+        <div class="relative w-32 h-32 mb-10 border border-white/10 rounded-3xl flex items-center justify-center overflow-hidden glass-terminal">
+            <i data-lucide="fingerprint" class="w-12 h-12 text-white/40"></i>
             <div class="scan-line"></div>
         </div>
-        <button onclick="unlock()" class="px-8 py-3 border border-white text-[10px] uppercase tracking-[0.4em] hover:bg-white hover:text-black transition-all">Identify Founder</button>
+        <h2 class="text-[10px] uppercase tracking-[0.8em] text-white/30 mb-8 font-bold">Identity Verification Protocol</h2>
+        <button onclick="unlockSystem()" class="interactive px-12 py-4 border border-white/20 text-[10px] uppercase tracking-[0.4em] hover:bg-white hover:text-black transition-all">
+            Access Terminal
+        </button>
+        <p id="geo-text" class="absolute bottom-10 text-[9px] uppercase tracking-widest text-white/20 italic">Scanning Local Node...</p>
     </div>
 
-    <!-- 2. MAIN NAV -->
-    <nav class="fixed top-0 w-full z-50 px-8 py-6 flex justify-between items-center mix-blend-difference">
-        <div class="text-2xl font-bold tracking-tighter italic">FENIX</div>
-        <button onclick="toggleCommand()" class="glass-panel px-5 py-2 rounded-full text-[10px] uppercase tracking-widest flex items-center gap-2 border border-white/10">
-            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Terminal
-        </button>
-    </nav>
-
-    <!-- 3. HERO -->
-    <main id="content" class="opacity-0 transition-opacity duration-1000">
-        <section class="h-screen flex flex-col items-center justify-center px-6 text-center">
-            <h2 class="text-[10px] uppercase tracking-[1em] mb-4 text-white/40">The Final Evolution</h2>
-            <h1 class="text-7xl md:text-9xl font-bold tracking-tighter mb-10 liquid-chrome">ARCHITECT</h1>
-            <button onclick="toggleCommand()" class="group relative px-12 py-5 bg-white text-black text-[11px] font-bold uppercase tracking-[0.3em] overflow-hidden">
-                <span class="relative z-10">Start Project</span>
+    <!-- [2] MAIN LANDING INTERFACE -->
+    <main id="hero" class="relative z-10 opacity-0 transition-opacity duration-1000 pointer-events-none">
+        <!-- Navigation -->
+        <nav class="fixed top-0 w-full px-10 py-10 flex justify-between items-center">
+            <div class="text-2xl font-black liquid-chrome tracking-tighter">FENIX</div>
+            <button onclick="toggleOS('pricing')" class="interactive glass-terminal px-6 py-2 rounded-full text-[10px] uppercase font-bold tracking-widest border border-white/10">
+                Command Center
             </button>
-        </section>
+        </nav>
 
-        <!-- PRICING TILE -->
-        <section id="pricing" class="py-20 px-6 max-w-7xl mx-auto">
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="glass-panel p-10 rounded-3xl flex flex-col items-start gap-6 border-white/5">
-                    <span class="text-[10px] uppercase tracking-widest text-white/40">Tier 01</span>
-                    <h3 class="text-4xl font-bold italic">ELITE</h3>
-                    <p class="text-sm text-white/40">Performance-first architecture for scaling brands.</p>
-                    <div class="text-2xl font-bold">₹80,000</div>
-                    <button onclick="initiateProtocol('ELITE', 80000)" class="w-full py-4 bg-white/5 border border-white/10 rounded-xl text-[10px] uppercase font-bold tracking-widest hover:bg-white hover:text-black transition-all">Initiate</button>
-                </div>
-
-                <div class="glass-panel p-10 rounded-3xl flex flex-col items-start gap-6 border-white/20 bg-white/5 scale-105">
-                    <span class="text-[10px] uppercase tracking-widest text-white/40">Tier 02</span>
-                    <h3 class="text-4xl font-bold italic">MASTER</h3>
-                    <p class="text-sm text-white/40">Full E-commerce ecosystem with custom motion.</p>
-                    <div class="text-2xl font-bold text-white">₹1,20,000</div>
-                    <button onclick="initiateProtocol('MASTER', 120000)" class="w-full py-4 bg-white text-black rounded-xl text-[10px] uppercase font-bold tracking-widest hover:scale-95 transition-all">Initiate</button>
-                </div>
-
-                <div class="glass-panel p-10 rounded-3xl flex flex-col items-start gap-6 border-white/5">
-                    <span class="text-[10px] uppercase tracking-widest text-white/40">Tier 03</span>
-                    <h3 class="text-4xl font-bold italic">PRO MAX</h3>
-                    <p class="text-sm text-white/40">AI-Integrated enterprise applications.</p>
-                    <div class="text-2xl font-bold">₹2,20,000</div>
-                    <button onclick="initiateProtocol('PRO MAX', 220000)" class="w-full py-4 bg-white/5 border border-white/10 rounded-xl text-[10px] uppercase font-bold tracking-widest hover:bg-white hover:text-black transition-all">Initiate</button>
-                </div>
+        <!-- Hero Section -->
+        <section class="h-screen flex flex-col items-center justify-center text-center px-6">
+            <h1 class="text-7xl md:text-[11rem] font-bold tracking-tighter leading-[0.85] mb-12">
+                FORGE THE <br> <span class="liquid-chrome">EMPIRE.</span>
+            </h1>
+            <p class="text-white/40 max-w-2xl text-sm md:text-xl font-light mb-16 tracking-wide leading-relaxed">
+                Autonomous high-performance ecosystems for the sovereign elite. Designed in California. Engineered for the World.
+            </p>
+            <div class="flex gap-8">
+                <button onclick="toggleOS('build')" class="interactive px-12 py-5 bg-white text-black font-bold text-[11px] uppercase tracking-[0.3em]">
+                    Initiate Build
+                </button>
+                <button onclick="toggleOS('pricing')" class="interactive px-12 py-5 border border-white/20 text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:text-black">
+                    Architecture
+                </button>
             </div>
         </section>
+
+        <!-- Scarcity Ticker -->
+        <div class="fixed bottom-10 left-10 flex items-center gap-4">
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span class="text-[10px] uppercase tracking-[0.3em] text-white/40">Terminal Active: 02 Slots Remaining</span>
+        </div>
     </main>
 
-    <!-- 4. THE COMMAND CENTER (WEB INTERFACE) -->
-    <div id="command-center" class="fixed inset-0 z-[100] glass-panel m-2 md:m-6 rounded-[2rem] overflow-hidden flex flex-col shadow-2xl border border-white/20">
+    <!-- [3] COMMAND OS INTERFACE (THE "NEW" INTERFACE) -->
+    <div id="os-interface" class="fixed inset-0 z-[500] glass-terminal m-4 md:m-8 rounded-[2.5rem] flex flex-col overflow-hidden">
         <!-- Header -->
-        <div class="p-8 border-b border-white/10 flex justify-between items-center">
-            <div>
-                <h2 class="text-2xl font-bold tracking-tighter">PROJECT TERMINAL</h2>
-                <p id="node-info" class="text-[8px] uppercase tracking-widest text-white/40 font-mono">Status: Connected | Node: 0x77AF</p>
+        <div class="p-8 border-b border-white/10 flex justify-between items-center bg-black/40">
+            <div class="flex items-center gap-6">
+                <div class="flex gap-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50 interactive" onclick="toggleOS()"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500/10 border border-yellow-500/30"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500/10 border border-green-500/30"></div>
+                </div>
+                <h2 class="text-xs font-bold uppercase tracking-[0.3em] text-white/50">Fenix_Core_System.exe</h2>
             </div>
-            <button onclick="toggleCommand()" class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
+            <div class="flex gap-4">
+                <button onclick="switchTab('pricing')" class="interactive text-[9px] uppercase font-bold tracking-widest text-white/40 hover:text-white">Tiers</button>
+                <button onclick="switchTab('roi')" class="interactive text-[9px] uppercase font-bold tracking-widest text-white/40 hover:text-white">ROI_Calc</button>
+                <button onclick="switchTab('checkout')" class="interactive text-[9px] uppercase font-bold tracking-widest text-white/40 hover:text-white">Checkout</button>
+            </div>
         </div>
 
-        <!-- Interface Content -->
-        <div class="flex-1 overflow-y-auto p-8 md:p-12">
-            <div id="wizard-step" class="max-w-2xl mx-auto">
-                <div class="mb-12">
-                    <div class="flex gap-2 mb-4">
-                        <div class="h-1 flex-1 bg-white"></div>
-                        <div class="h-1 flex-1 bg-white/10"></div>
-                        <div class="h-1 flex-1 bg-white/10"></div>
-                    </div>
-                    <h3 class="text-4xl font-bold mb-4">What are we building today?</h3>
-                    <p class="text-white/40 text-sm">Select the core objective of your digital empire.</p>
+        <!-- OS Body -->
+        <div class="flex-1 overflow-y-auto p-10 md:p-20">
+            
+            <!-- Tab: Pricing -->
+            <div id="tab-pricing" class="tab-content space-y-20">
+                <div class="text-center mb-20">
+                    <h3 class="text-5xl font-bold tracking-tighter italic mb-4">Elite Architecture</h3>
+                    <p class="text-white/30 uppercase text-[10px] tracking-widest">Select your operational base</p>
                 </div>
-
-                <div class="grid gap-4">
-                    <button onclick="nextStep()" class="p-6 rounded-2xl border border-white/10 text-left hover:border-white transition-all group">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs uppercase font-bold tracking-widest">E-commerce Platform</span>
-                            <i data-lucide="arrow-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-all"></i>
-                        </div>
-                    </button>
-                    <button onclick="nextStep()" class="p-6 rounded-2xl border border-white/10 text-left hover:border-white transition-all group">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs uppercase font-bold tracking-widest">SaaS Architecture</span>
-                            <i data-lucide="arrow-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-all"></i>
-                        </div>
-                    </button>
-                    <button onclick="nextStep()" class="p-6 rounded-2xl border border-white/10 text-left hover:border-white transition-all group">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs uppercase font-bold tracking-widest">High-Performance Portfolio</span>
-                            <i data-lucide="arrow-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-all"></i>
-                        </div>
-                    </button>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="glass-terminal p-10 rounded-3xl border-white/5 hover:border-white/20 transition-all group">
+                        <span class="text-[10px] text-white/40 mb-2 block uppercase">Startup</span>
+                        <h4 class="text-3xl font-bold mb-6 italic">BASIC</h4>
+                        <p class="text-xs text-white/40 mb-10 leading-relaxed">Essential sovereign presence. Optimized for market entry.</p>
+                        <div class="text-2xl font-bold mb-8">₹60,000</div>
+                        <button onclick="selectPlan('BASIC', 60000)" class="interactive w-full py-4 bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black">Deploy</button>
+                    </div>
+                    <div class="glass-terminal p-10 rounded-3xl border-white/40 bg-white/5 scale-105 group">
+                        <span class="text-[10px] text-white/40 mb-2 block uppercase">Founder Choice</span>
+                        <h4 class="text-3xl font-bold mb-6 italic">ELITE</h4>
+                        <p class="text-xs text-white/40 mb-10 leading-relaxed">Full UI/UX hardening and performance ecosystem.</p>
+                        <div class="text-2xl font-bold mb-8">₹80,000</div>
+                        <button onclick="selectPlan('ELITE', 80000)" class="interactive w-full py-4 bg-white text-black text-[10px] font-bold uppercase tracking-widest">Deploy</button>
+                    </div>
+                    <div class="glass-terminal p-10 rounded-3xl border-white/5 hover:border-white/20 transition-all group">
+                        <span class="text-[10px] text-white/40 mb-2 block uppercase">Enterprise</span>
+                        <h4 class="text-3xl font-bold mb-6 italic">PRO MAX</h4>
+                        <p class="text-xs text-white/40 mb-10 leading-relaxed">AI core integration and advanced motion engine.</p>
+                        <div class="text-2xl font-bold mb-8">₹2,20,000</div>
+                        <button onclick="selectPlan('PRO-MAX', 220000)" class="interactive w-full py-4 bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black">Deploy</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Final Summary (Hidden by default) -->
-            <div id="summary-step" class="hidden max-w-2xl mx-auto text-center">
-                <div class="mb-8 flex justify-center">
-                    <div class="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center">
-                        <i data-lucide="check" class="text-green-500 w-10 h-10"></i>
+            <!-- Tab: ROI -->
+            <div id="tab-roi" class="tab-content hidden flex flex-col items-center justify-center min-h-full">
+                <div class="max-w-2xl w-full glass-terminal p-12 rounded-[2rem]">
+                    <h3 class="text-3xl font-bold mb-10 tracking-tighter italic">ROI Projector</h3>
+                    <div class="space-y-12">
+                        <div class="space-y-4">
+                            <div class="flex justify-between text-[10px] uppercase font-bold text-white/40">
+                                <span>Investment Delta</span>
+                                <span id="roi-val">₹1,20,000</span>
+                            </div>
+                            <input type="range" id="roi-slider" min="60000" max="1000000" step="10000" value="120000" class="w-full h-1 bg-white/10 appearance-none rounded-full accent-white cursor-pointer">
+                        </div>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="p-8 border border-white/5 rounded-2xl bg-black/20 text-center">
+                                <p class="text-[9px] text-white/30 uppercase mb-2">Projected Growth</p>
+                                <span class="text-3xl font-bold text-green-500 tracking-tighter">+240%</span>
+                            </div>
+                            <div class="p-8 border border-white/5 rounded-2xl bg-white text-black text-center">
+                                <p class="text-[9px] text-black/30 uppercase mb-2">Revenue Forecast</p>
+                                <span id="roi-rev" class="text-3xl font-bold tracking-tighter">₹2.8L</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <h3 class="text-4xl font-bold mb-2">Protocol Ready.</h3>
-                <p id="final-details" class="text-white/40 text-sm mb-12 uppercase tracking-widest">Plan: Elite | Value: ₹80,000</p>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <button onclick="shareWhatsApp()" class="py-4 bg-green-600 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2">
-                        <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp Concierge
-                    </button>
-                    <button onclick="window.print()" class="py-4 glass-panel border border-white/10 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2">
-                        <i data-lucide="file-text" class="w-4 h-4"></i> Generate Invoice
-                    </button>
+            </div>
+
+            <!-- Tab: Checkout -->
+            <div id="tab-checkout" class="tab-content hidden flex flex-col items-center justify-center min-h-full">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-green-500/10 border border-green-500/30 rounded-full flex items-center justify-center mx-auto mb-8">
+                        <i data-lucide="shield-check" class="w-10 h-10 text-green-500"></i>
+                    </div>
+                    <h3 class="text-5xl font-bold tracking-tighter italic mb-4">Protocol Ready.</h3>
+                    <p id="checkout-plan" class="text-white/40 uppercase text-[10px] tracking-[0.5em] mb-12">Plan: ELITE | Value: ₹80,000</p>
+                    <div class="flex flex-col md:flex-row gap-4 justify-center">
+                        <button onclick="finalize()" class="interactive px-12 py-5 bg-green-600 text-white rounded-2xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-3">
+                            <i data-lucide="message-square" class="w-4 h-4"></i> Secure Via Concierge
+                        </button>
+                        <button onclick="window.print()" class="interactive px-12 py-5 glass-terminal rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black">
+                            Generate Invoice
+                        </button>
+                    </div>
                 </div>
             </div>
+
         </div>
 
         <!-- Footer -->
-        <div class="p-8 border-t border-white/10 text-center">
-            <p class="text-[8px] uppercase tracking-[0.5em] text-white/20">FENIX Operating System v1.0.4 - Secure Connection</p>
+        <div class="p-8 border-t border-white/10 text-center bg-black/40">
+            <p class="text-[8px] uppercase tracking-[0.5em] text-white/20">© FENIX OS v1.0.4 - All Systems Nominal</p>
         </div>
     </div>
 
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-10 right-10 z-[2000] glass-terminal px-8 py-5 rounded-2xl flex items-center gap-4 translate-y-20 opacity-0 transition-all">
+        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+        <p id="toast-msg" class="text-[10px] font-bold uppercase tracking-widest text-white/80"></p>
+    </div>
+
     <script>
-        // 1. SYSTEM INITIALIZATION
-        let currentPlan = "None";
-        let currentPrice = 0;
+        // --- 1. CORE SYSTEM STATE ---
+        const FENIX = {
+            plan: 'ELITE',
+            price: 80000,
+            city: 'Global',
+            isOSOpen: false,
+            audio: {
+                click: new Audio('https://www.soundjay.com/buttons/button-50.mp3'),
+                unlock: new Audio('https://www.soundjay.com/buttons/button-10.mp3')
+            }
+        };
 
-        function unlock() {
-            const gate = document.getElementById('gate');
-            gsap.to(gate, { opacity: 0, scale: 1.1, duration: 1, ease: "power4.inOut", onComplete: () => {
-                gate.remove();
-                document.getElementById('content').classList.remove('opacity-0');
-                initMain();
-            }});
-        }
-
-        function initMain() {
+        // --- 2. INITIALIZATION ---
+        window.addEventListener('load', () => {
             lucide.createIcons();
             initThree();
-            // Geo IP Detection
-            fetch('https://ipapi.co/json/').then(r=>r.json()).then(d => {
-                document.getElementById('node-info').innerText = `Status: Active | Node: ${d.city}, ${d.country_code}`;
-            });
-        }
+            setupCursor();
+            detectLocation();
+            handleHash();
+            FENIX.audio.click.volume = 0.1;
+        });
 
-        // 2. INTERFACE CONTROLS
-        function toggleCommand() {
-            const cc = document.getElementById('command-center');
-            cc.classList.toggle('open');
-            document.body.classList.toggle('modal-active');
-        }
-
-        function initiateProtocol(plan, price) {
-            currentPlan = plan;
-            currentPrice = price;
-            document.getElementById('final-details').innerText = `Plan: ${plan} | Value: ₹${price.toLocaleString()}`;
-            
-            // UI Transition
-            document.getElementById('wizard-step').classList.add('hidden');
-            document.getElementById('summary-step').classList.remove('hidden');
-            
-            toggleCommand();
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-        }
-
-        function nextStep() {
-            // Animation for step transitions
-            gsap.to('#wizard-step', { opacity: 0, x: -20, duration: 0.3, onComplete: () => {
-                document.getElementById('wizard-step').classList.add('hidden');
-                document.getElementById('summary-step').classList.remove('hidden');
-                gsap.fromTo('#summary-step', { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.3 });
+        function unlockSystem() {
+            FENIX.audio.unlock.play().catch(() => {});
+            gsap.to("#gate", { opacity: 0, scale: 1.1, duration: 1, ease: "expo.inOut", onComplete: () => {
+                document.getElementById('gate').remove();
+                const hero = document.getElementById('hero');
+                hero.classList.remove('opacity-0');
+                hero.classList.remove('pointer-events-none');
+                gsap.from(hero, { y: 30, duration: 1.5, ease: "expo.out" });
             }});
         }
 
-        function shareWhatsApp() {
-            const msg = encodeURIComponent(`[COMMAND INITIATED]\n\nI am ready to build my Digital Empire with FENIX.\n\nPlan: ${currentPlan}\nInvestment: ₹${currentPrice.toLocaleString()}\n\nContact me for the technical blueprint.`);
-            window.open(`https://wa.me/917995313645?text=${msg}`);
+        // --- 3. THE COMMAND OS ENGINE ---
+        function toggleOS(tab = 'pricing') {
+            const os = document.getElementById('os-interface');
+            FENIX.isOSOpen = !FENIX.isOSOpen;
+            
+            if(FENIX.isOSOpen) {
+                os.classList.add('active');
+                switchTab(tab);
+            } else {
+                os.classList.remove('active');
+            }
+            playClick();
         }
 
-        // 3. BACKGROUND ENGINE (THREE.JS)
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            gsap.fromTo(`#tab-${tabId}`, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4 });
+            playClick();
+        }
+
+        function selectPlan(name, price) {
+            FENIX.plan = name;
+            FENIX.price = price;
+            document.getElementById('checkout-plan').innerText = `Plan: ${name} | Value: ₹${price.toLocaleString()}`;
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ffffff', '#222222'] });
+            showToast(`${name} ARCHITECTURE SELECTED`);
+            switchTab('checkout');
+        }
+
+        // --- 4. ROI ENGINE MATH ---
+        document.getElementById('roi-slider').addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            document.getElementById('roi-val').innerText = `₹${val.toLocaleString()}`;
+            document.getElementById('roi-rev').innerText = `₹${(val * 4.2).toLocaleString().split('.')[0]}L`;
+        });
+
+        // --- 5. 3D BACKGROUND ENGINE ---
         function initThree() {
-            const canvas = document.getElementById('three-canvas');
             const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas-bg'), alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
 
-            const geo = new THREE.BufferGeometry();
-            const count = 1000;
-            const pos = new Float32Array(count * 3);
-            for(let i=0; i<count*3; i++) pos[i] = (Math.random() - 0.5) * 15;
-            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-            
-            const mat = new THREE.PointsMaterial({ size: 0.015, color: 0xffffff, transparent: true, opacity: 0.3 });
-            const points = new THREE.Points(geo, mat);
+            const geometry = new THREE.BufferGeometry();
+            const vertices = [];
+            for (let i = 0; i < 2500; i++) {
+                vertices.push(THREE.MathUtils.randFloatSpread(20), THREE.MathUtils.randFloatSpread(20), THREE.MathUtils.randFloatSpread(20));
+            }
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            const material = new THREE.PointsMaterial({ color: 0xffffff, size: 0.02, transparent: true, opacity: 0.2 });
+            const points = new THREE.Points(geometry, material);
             scene.add(points);
             camera.position.z = 5;
 
             function animate() {
                 requestAnimationFrame(animate);
                 points.rotation.y += 0.0005;
-                points.rotation.x += 0.0002;
                 renderer.render(scene, camera);
             }
             animate();
@@ -281,7 +362,51 @@
             });
         }
 
-        // 4. SCROLL ENGINE
+        // --- 6. UTILITIES ---
+        function setupCursor() {
+            const dot = document.getElementById('cursor-dot');
+            const outline = document.getElementById('cursor-outline');
+            window.addEventListener('mousemove', (e) => {
+                gsap.to(dot, { x: e.clientX, y: e.clientY, duration: 0.1 });
+                gsap.to(outline, { x: e.clientX - 16, y: e.clientY - 16, duration: 0.25 });
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            gsap.to(toast, { y: 0, opacity: 1, duration: 0.5 });
+            setTimeout(() => gsap.to(toast, { y: 20, opacity: 0, duration: 0.5 }), 3000);
+        }
+
+        function playClick() {
+            FENIX.audio.click.currentTime = 0;
+            FENIX.audio.click.play().catch(() => {});
+        }
+
+        function detectLocation() {
+            fetch('https://ipapi.co/json/').then(r => r.json()).then(d => {
+                FENIX.city = d.city;
+                document.getElementById('geo-text').innerText = `Node: ${d.city}, ${d.country_code} Secure`;
+            });
+        }
+
+        function finalize() {
+            const msg = encodeURIComponent(`[FENIX COMMAND]\n\nI am ready to initiate the ${FENIX.plan} protocol.\n\nProject Value: ₹${FENIX.price.toLocaleString()}\nTerminal ID: 0x${Math.random().toString(16).slice(2, 8).toUpperCase()}`);
+            window.open(`https://wa.me/917995313645?text=${msg}`);
+        }
+
+        function handleHash() {
+            const hash = window.location.hash;
+            if (hash.includes('plan=Elite')) {
+                setTimeout(() => {
+                    unlockSystem();
+                    setTimeout(() => toggleOS('pricing'), 1200);
+                }, 1000);
+            }
+        }
+
+        // Smooth Scroll
         const lenis = new Lenis();
         function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
         requestAnimationFrame(raf);
