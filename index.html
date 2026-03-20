@@ -3,11 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FENIX | Premium Web Customization</title>
-    
-    <link rel="stylesheet" href="css/style.css">
+    <title>FENIX | Web Customization & Design</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Base Theme */
+        body {
+            margin: 0;
+            background-color: #050505;
+            color: #ffffff;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Glassmorphism Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            color: #ffffff;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%);
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            margin: 0;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #aaaaaa;
+            margin-top: 20px;
+        }
+
+        /* About Us Section */
+        .about-section {
+            padding: 120px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+
+        .about-text {
+            font-size: 1.2rem;
+            color: #cccccc;
+            margin-bottom: 60px;
+        }
+
+        /* Team Grid */
+        .team-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 60px;
+        }
+
+        .team-member {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 12px;
+            min-width: 250px;
+            transition: transform 0.3s, background 0.3s;
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .team-member h4 {
+            margin: 0 0 5px 0;
+            font-size: 1.4rem;
+        }
+
+        .team-member span {
+            color: #888888;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .rise-tagline {
+            font-size: 3rem;
+            background: linear-gradient(90deg, #ffffff, #666666);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-top: 20px;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 100px 20px;
+            text-align: center;
+            background-color: #080808;
+        }
+
+        .pricing-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 50px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .price-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 40px 30px;
+            width: 220px;
+            transition: transform 0.3s ease;
+        }
+
+        .price-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .price-card h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #dddddd;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #ffffff;
+        }
+
+        /* Floating Contact Buttons */
+        .floating-contact {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 9999;
+        }
+
+        .float-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            font-size: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            transition: transform 0.2s;
+        }
+
+        .float-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .call-btn { background-color: #007bff; }
+        .wa-btn { background-color: #25D366; }
+
+        /* Scroll Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .rise-tagline { font-size: 2rem; }
+            .floating-contact { bottom: 20px; right: 20px; }
+            .float-btn { width: 50px; height: 50px; font-size: 24px; }
+            .navbar { padding: 15px 20px; }
+        }
+    </style>
 </head>
 <body>
 
@@ -16,32 +235,55 @@
     </nav>
 
     <header class="hero">
-        <h1>Digital Reality,<br>Architected by AI.</h1>
-        <p>Next-generation web customization for elite brands.</p>
+        <h1 class="reveal">Digital Reality,<br>Architected by FENIX.</h1>
+        <p class="reveal">Next-generation web customization for elite brands.</p>
     </header>
 
+    <section class="about-section">
+        <div class="reveal">
+            <h2>About Us</h2>
+            <p class="about-text"><strong>FENIX</strong> is a dynamic startup founded in 2026, driven by innovation, creativity, and results. We help businesses grow by combining strategic marketing, cutting-edge technology, and impactful design.</p>
+        </div>
+
+        <div class="team-grid reveal">
+            <div class="team-member">
+                <h4>Shiva Kumar</h4>
+                <span>Senior Marketing Head</span>
+            </div>
+            <div class="team-member">
+                <h4>Pruvthi & Arvind</h4>
+                <span>Tech Experts</span>
+            </div>
+            <div class="team-member">
+                <h4>Akhil</h4>
+                <span>Design & Social Media</span>
+            </div>
+        </div>
+
+        <div class="reveal">
+            <p style="color: #aaaaaa; font-size: 1.1rem;">With a track record of successful projects, FENIX is committed to delivering smart, scalable, and result-oriented solutions.</p>
+            <h3 class="rise-tagline">We don’t just build brands — we help them rise.</h3>
+        </div>
+    </section>
+
     <section class="pricing-section">
-        <h2>Investment Tiers</h2>
-        <div class="pricing-grid">
+        <h2 class="reveal">Investment Tiers</h2>
+        <div class="pricing-grid reveal">
             <div class="price-card">
                 <h3>Basic</h3>
                 <p class="price">₹60k</p>
-                <p class="details">Essential web presence.</p>
             </div>
             <div class="price-card">
                 <h3>Elite</h3>
                 <p class="price">₹80k</p>
-                <p class="details">Advanced customization.</p>
             </div>
-            <div class="price-card popular">
+            <div class="price-card">
                 <h3>Master</h3>
                 <p class="price">₹1.2L</p>
-                <p class="details">Immersive interactions.</p>
             </div>
-            <div class="price-card premium">
+            <div class="price-card">
                 <h3>Pro Max</h3>
                 <p class="price">₹2.2L</p>
-                <p class="details">The ultimate digital experience.</p>
             </div>
         </div>
     </section>
@@ -54,6 +296,31 @@
             <i class="fab fa-whatsapp"></i>
         </a>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const reveals = document.querySelectorAll(".reveal");
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("active");
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            reveals.forEach(reveal => {
+                observer.observe(reveal);
+            });
+            
+            // Trigger animation for the Hero section immediately on load
+            setTimeout(() => {
+                document.querySelectorAll('.hero .reveal').forEach(el => {
+                    el.classList.add('active');
+                });
+            }, 100);
+        });
+    </script>
 
 </body>
 </html>
