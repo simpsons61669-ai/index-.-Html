@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>FENIX | Next-Gen Web Architecture</title>
+    <meta name="description" content="Digital reality architected by AI. We don't just build brands — we help them rise.">
+    <meta property="og:title" content="FENIX | Web Customization & Design">
+    <meta property="og:description" content="Premium web architecture by Shiva Kumar and the FENIX syndicate.">
+    <meta property="og:type" content="website">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -13,64 +18,36 @@
             margin: 0; background-color: #010005; color: #ffffff;
             font-family: 'Helvetica Neue', Arial, sans-serif;
             overflow-x: hidden; line-height: 1.6;
-            cursor: none; /* Hides default cursor for our custom one */
+            cursor: none; /* Hides default cursor */
         }
+
+        /* CUSTOM NEON SCROLLBAR */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #010005; }
+        ::-webkit-scrollbar-thumb { background: #bd00ff; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00f3ff; }
 
         /* 3D Starfield Canvas */
         #space-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; }
 
         /* --- 2. CUSTOM NEON CURSOR --- */
-        .cursor-dot {
-            width: 8px; height: 8px; background-color: #00f3ff;
-            position: fixed; border-radius: 50%; z-index: 99999;
-            pointer-events: none; transform: translate(-50%, -50%);
-            box-shadow: 0 0 10px #00f3ff;
-        }
-        .cursor-outline {
-            width: 40px; height: 40px; border: 1px solid rgba(189, 0, 255, 0.5);
-            position: fixed; border-radius: 50%; z-index: 99999;
-            pointer-events: none; transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s, background-color 0.2s;
-        }
-        /* Hide custom cursor on mobile touchscreens */
+        .cursor-dot { width: 8px; height: 8px; background-color: #00f3ff; position: fixed; border-radius: 50%; z-index: 99999; pointer-events: none; transform: translate(-50%, -50%); box-shadow: 0 0 10px #00f3ff; }
+        .cursor-outline { width: 40px; height: 40px; border: 1px solid rgba(189, 0, 255, 0.5); position: fixed; border-radius: 50%; z-index: 99999; pointer-events: none; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s, background-color 0.2s; }
         @media (hover: none) and (pointer: coarse) { .cursor-dot, .cursor-outline { display: none; } body { cursor: auto; } }
 
         /* --- 3. CINEMATIC PRELOADER --- */
-        #preloader {
-            position: fixed; inset: 0; background: #010005; z-index: 100000;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 1s ease, visibility 1s ease;
-        }
-        .preloader-brand {
-            font-size: 3rem; font-weight: bold; letter-spacing: 10px;
-            background: linear-gradient(90deg, #ffffff, #bd00ff);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            animation: pulse 2s infinite;
-        }
-        .loading-line {
-            width: 200px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 20px;
-            position: relative; overflow: hidden;
-        }
-        .loading-line::after {
-            content: ''; position: absolute; left: -50%; width: 50%; height: 100%;
-            background: #00f3ff; animation: loading 1.5s infinite ease-in-out;
-        }
+        #preloader { position: fixed; inset: 0; background: #010005; z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1s ease, visibility 1s ease; }
+        .preloader-brand { font-size: 3rem; font-weight: bold; letter-spacing: 10px; background: linear-gradient(90deg, #ffffff, #bd00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: pulse 2s infinite; }
+        .loading-line { width: 200px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 20px; position: relative; overflow: hidden; }
+        .loading-line::after { content: ''; position: absolute; left: -50%; width: 50%; height: 100%; background: #00f3ff; animation: loading 1.5s infinite ease-in-out; }
         @keyframes pulse { 0%, 100% { opacity: 0.5; filter: blur(2px); } 50% { opacity: 1; filter: blur(0px); } }
         @keyframes loading { 0% { left: -50%; } 100% { left: 100%; } }
 
         /* --- 4. NAVIGATION & HERO --- */
-        .navbar {
-            position: fixed; top: 0; width: 100%; padding: 20px 50px;
-            background: rgba(1, 0, 5, 0.5); backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            z-index: 100; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center;
-        }
-        .logo { font-size: 28px; font-weight: bold; letter-spacing: 4px; color: #fff; }
+        .navbar { position: fixed; top: 0; width: 100%; padding: 20px 50px; background: rgba(1, 0, 5, 0.5); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); z-index: 100; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 28px; font-weight: bold; letter-spacing: 4px; color: #fff; cursor: pointer; }
 
-        .hero {
-            height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
-            padding: 0 20px; position: relative; background: radial-gradient(circle at center, rgba(30,10,50,0.3) 0%, transparent 70%);
-        }
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 20px; position: relative; background: radial-gradient(circle at center, rgba(30,10,50,0.3) 0%, transparent 70%); }
         .hero h1 { font-size: 5.5rem; margin: 0; line-height: 1.1; text-shadow: 0 0 50px rgba(189, 0, 255, 0.2); }
         .hero p { font-size: 1.4rem; color: #a3a3c2; margin-top: 20px; letter-spacing: 1px; }
 
@@ -78,39 +55,21 @@
         section { padding: 120px 20px; max-width: 1200px; margin: 0 auto; text-align: center; }
         h2.section-title { font-size: 3rem; margin-bottom: 50px; color: #ffffff; text-transform: uppercase; letter-spacing: 3px; }
         
-        /* Glass Cards (Used in About, Services, Portfolio) */
         .glass-grid { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 40px 30px; border-radius: 16px; flex: 1; min-width: 280px; max-width: 350px;
-            backdrop-filter: blur(10px); transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-            text-align: left; position: relative; overflow: hidden;
-        }
-        .glass-card:hover { 
-            transform: translateY(-10px); border-color: rgba(0, 243, 255, 0.3);
-            box-shadow: 0 15px 40px rgba(0, 243, 255, 0.05);
-        }
+        .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 40px 30px; border-radius: 16px; flex: 1; min-width: 280px; max-width: 350px; backdrop-filter: blur(10px); transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); text-align: left; position: relative; overflow: hidden; }
+        .glass-card:hover { transform: translateY(-10px); border-color: rgba(0, 243, 255, 0.3); box-shadow: 0 15px 40px rgba(0, 243, 255, 0.05); }
         .glass-card h3 { color: #fff; font-size: 1.5rem; margin-top: 0; }
         .glass-card p { color: #8888aa; font-size: 1rem; line-height: 1.7; }
         .glass-card i { font-size: 2.5rem; color: #bd00ff; margin-bottom: 20px; display: block; }
 
         /* --- 6. SPECIFIC SECTIONS --- */
-        /* About Tagline */
         .rise-tagline { font-size: 3.5rem; margin-top: 40px; background: linear-gradient(90deg, #00f3ff, #bd00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .portfolio-box { height: 200px; background: rgba(0,0,0,0.5); border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; color: #444; font-weight: bold; border: 1px solid rgba(255,255,255,0.05); transition: background 0.3s; background-size: cover; background-position: center; }
         
-        /* Portfolio Showreel (Blank boxes for future images) */
-        .portfolio-box { height: 200px; background: rgba(0,0,0,0.5); border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; color: #444; font-weight: bold; border: 1px solid rgba(255,255,255,0.05); }
-
-        /* Testimonials */
-        .testimonial-text { font-size: 1.2rem; font-style: italic; color: #ddd; margin-bottom: 20px; }
-        .testimonial-author { color: #00f3ff; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* Pricing (Overriding glass-card slightly for center alignment) */
         .price-card { text-align: center; cursor: pointer; }
         .price-card:hover { border-color: #bd00ff; box-shadow: 0 15px 40px rgba(189, 0, 255, 0.1); }
         .price-amount { font-size: 3rem; font-weight: bold; margin: 20px 0; color: #ffffff; }
 
-        /* Cosmic FAQ (Accordions) */
         .faq-container { max-width: 800px; margin: 0 auto; text-align: left; }
         details { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; margin-bottom: 15px; padding: 20px; transition: all 0.3s; }
         details[open] { border-color: rgba(0, 243, 255, 0.3); background: rgba(0, 243, 255, 0.02); }
@@ -119,8 +78,16 @@
         details[open] summary::after { transform: rotate(45deg); }
         .faq-answer { color: #8888aa; margin-top: 15px; line-height: 1.8; }
 
-        /* --- 7. MODALS & BUTTONS --- */
-        /* Exact same working modal from before */
+        /* --- 7. CONTACT FORM & FOOTER --- */
+        .contact-form { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+        .contact-form input, .contact-form textarea { width: 100%; padding: 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 1rem; font-family: inherit; box-sizing: border-box; transition: border-color 0.3s; }
+        .contact-form input:focus, .contact-form textarea:focus { outline: none; border-color: #00f3ff; background: rgba(255,255,255,0.08); }
+        .contact-form textarea { height: 150px; resize: vertical; }
+        
+        footer { border-top: 1px solid rgba(255,255,255,0.05); padding: 50px 20px; text-align: center; color: #666; font-size: 0.9rem; background: #010005; }
+        .footer-brand { font-size: 1.5rem; color: #fff; font-weight: bold; letter-spacing: 2px; margin-bottom: 10px; }
+
+        /* --- 8. MODALS & BUTTONS --- */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px); z-index: 10000; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.4s ease; }
         .modal-overlay.active { display: flex; opacity: 1; }
         .modal-content { background: linear-gradient(145deg, rgba(15,10,25,0.9), rgba(5,2,10,0.9)); border: 1px solid rgba(189, 0, 255, 0.3); padding: 50px 40px; border-radius: 20px; max-width: 500px; width: 90%; text-align: center; position: relative; transform: translateY(50px) scale(0.9); transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
@@ -130,24 +97,30 @@
         #modal-title { font-size: 2rem; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 2px; color: #00f3ff; }
         #modal-price { font-size: 2.5rem; color: #fff; margin: 0 0 20px 0; }
         #modal-desc { font-size: 1.1rem; color: #b0b0c0; line-height: 1.8; margin-bottom: 30px; }
-        .modal-cta-btn { display: inline-block; padding: 15px 40px; background: linear-gradient(90deg, #bd00ff, #00f3ff); color: #ffffff; text-decoration: none; font-weight: bold; font-size: 1.1rem; border-radius: 30px; border: none; transition: transform 0.2s; cursor: pointer; }
-        .modal-cta-btn:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(0, 243, 255, 0.4); }
+        
+        /* The Magnetic Button Styling */
+        .magnetic-btn { display: inline-block; padding: 15px 40px; background: linear-gradient(90deg, #bd00ff, #00f3ff); color: #ffffff; text-decoration: none; font-weight: bold; font-size: 1.1rem; border-radius: 30px; border: none; cursor: pointer; position: relative; z-index: 10; transition: box-shadow 0.3s; }
+        .magnetic-btn:hover { box-shadow: 0 0 25px rgba(0, 243, 255, 0.4); }
 
-        /* Floating Contact */
+        /* Floating Controls (Contact & Audio) */
         .floating-contact { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 9999; }
-        .float-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; text-decoration: none; color: white; font-size: 30px; box-shadow: 0 0 20px rgba(0,0,0,0.8); transition: transform 0.2s; }
+        .floating-audio { position: fixed; bottom: 30px; left: 30px; z-index: 9999; }
+        
+        .float-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; text-decoration: none; color: white; font-size: 24px; box-shadow: 0 0 20px rgba(0,0,0,0.8); transition: transform 0.2s; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
         .float-btn:hover { transform: scale(1.1); }
         .call-btn { background-color: #00f3ff; color: #000; }
         .wa-btn { background-color: #25D366; }
+        .audio-btn { background: rgba(10,10,20,0.8); backdrop-filter: blur(10px); color: #bd00ff; }
 
         /* Scroll Animations */
         .reveal { opacity: 0; transform: translateY(60px); transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
-        /* Mobile Adjustments */
         @media (max-width: 768px) {
             .hero h1 { font-size: 3rem; } .rise-tagline { font-size: 2rem; }
-            .floating-contact { bottom: 20px; right: 20px; } .float-btn { width: 50px; height: 50px; font-size: 24px; }
+            .floating-contact, .floating-audio { bottom: 20px; } 
+            .floating-contact { right: 20px; } .floating-audio { left: 20px; }
+            .float-btn { width: 50px; height: 50px; font-size: 20px; }
             .navbar { padding: 15px 20px; }
         }
     </style>
@@ -169,6 +142,9 @@
     <header class="hero">
         <h1 class="reveal">Digital Reality,<br>Architected by AI.</h1>
         <p class="reveal">Next-generation web customization for elite brands.</p>
+        <div class="reveal" style="margin-top: 40px;">
+            <a href="#pricing" class="magnetic-btn">View Intelligence</a>
+        </div>
     </header>
 
     <section id="about">
@@ -221,12 +197,12 @@
         <p class="reveal" style="color:#a3a3c2; margin-bottom: 40px;">A glimpse into realities we've engineered.</p>
         <div class="glass-grid reveal">
             <div class="glass-card">
-                <div class="portfolio-box">Project Image 1</div>
+                <div class="portfolio-box" style="background-color: #111;">Image 1</div>
                 <h3>Aethera Lighting</h3>
                 <p>E-commerce experience with 3D product interaction.</p>
             </div>
             <div class="glass-card">
-                <div class="portfolio-box">Project Image 2</div>
+                <div class="portfolio-box" style="background-color: #111;">Image 2</div>
                 <h3>Saratoga Water</h3>
                 <p>High-end corporate branding and fluid scroll animations.</p>
             </div>
@@ -256,37 +232,23 @@
         </div>
     </section>
 
-    <section id="testimonials">
-        <h2 class="section-title reveal">Transmissions</h2>
-        <div class="glass-grid reveal">
-            <div class="glass-card">
-                <p class="testimonial-text">"FENIX completely transformed our digital presence. The AI-driven approach gave us a website that feels 5 years ahead of our competitors."</p>
-                <p class="testimonial-author">- TechFlow Startup</p>
-            </div>
-            <div class="glass-card">
-                <p class="testimonial-text">"Shiva and his team are relentless. They didn't just build a site, they built a lead-generating machine. Worth every rupee of the Pro Max package."</p>
-                <p class="testimonial-author">- Global Retail Corp</p>
-            </div>
-        </div>
+    <section id="contact">
+        <h2 class="section-title reveal">Global Command</h2>
+        <p class="reveal" style="color:#a3a3c2; margin-bottom: 40px;">Transmit your objective directly to the syndicate.</p>
+        
+        <form class="contact-form reveal" action="https://formspree.io/f/YOUR_FORM_ID_HERE" method="POST">
+            <input type="text" name="name" placeholder="Your Name or Brand" required>
+            <input type="email" name="email" placeholder="Your Email Interface" required>
+            <textarea name="message" placeholder="Project Coordinates (Tell us what you need)..." required></textarea>
+            <button type="submit" class="magnetic-btn" style="width: 100%;">Transmit Signal</button>
+        </form>
     </section>
 
-    <section id="faq">
-        <h2 class="section-title reveal">Intel</h2>
-        <div class="faq-container reveal">
-            <details>
-                <summary>How long does a website build take?</summary>
-                <div class="faq-answer">Basic and Elite packages typically take 2-4 weeks. Master and Pro Max packages involve deep customization and AI integration, taking 4-8 weeks.</div>
-            </details>
-            <details>
-                <summary>Do you provide hosting and maintenance?</summary>
-                <div class="faq-answer">Yes. We can set up high-performance cloud hosting and offer monthly retainers to ensure your site remains lightning fast and secure.</div>
-            </details>
-            <details>
-                <summary>Why is FENIX different from standard agencies?</summary>
-                <div class="faq-answer">We integrate Artificial Intelligence directly into our design and strategy workflows. This allows us to create highly personalized, immersive, and data-driven websites faster and with higher precision than traditional firms.</div>
-            </details>
-        </div>
-    </section>
+    <footer>
+        <div class="footer-brand">FENIX</div>
+        <p>Architected in Nalgonda, Telangana. Built for the Universe.</p>
+        <p>&copy; 2026 FENIX Digital Syndicate. All rights reserved.</p>
+    </footer>
 
     <div id="pricing-modal" class="modal-overlay">
         <div class="modal-content">
@@ -294,7 +256,13 @@
             <h2 id="modal-title">Package</h2>
             <h3 id="modal-price">₹0</h3>
             <p id="modal-desc">Details</p>
-            <a href="#" target="_blank" class="modal-cta-btn">Initiate Sequence</a>
+            <a href="#" target="_blank" class="magnetic-btn modal-cta-btn">Initiate Sequence</a>
+        </div>
+    </div>
+
+    <div class="floating-audio">
+        <div class="float-btn audio-btn" onclick="toggleAudio()" title="Toggle Space Ambient Audio">
+            <i id="audio-icon" class="fas fa-volume-mute"></i>
         </div>
     </div>
 
@@ -304,93 +272,124 @@
     </div>
 
     <script>
-        // 1. PRELOADER REMOVAL
+        // 1. PRELOADER
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('preloader').style.opacity = '0';
                 setTimeout(() => { document.getElementById('preloader').style.visibility = 'hidden'; }, 1000);
-            }, 1500); // Shows loading screen for 1.5 seconds
+            }, 1500); 
         });
 
-        // 2. CUSTOM NEON CURSOR
+        // 2. MAGNETIC BUTTONS
+        const magneticBtns = document.querySelectorAll('.magnetic-btn');
+        magneticBtns.forEach(btn => {
+            btn.addEventListener('mousemove', function(e) {
+                const position = btn.getBoundingClientRect();
+                const x = e.clientX - position.left - position.width / 2;
+                const y = e.clientY - position.top - position.height / 2;
+                btn.style.transform = `translate(${x * 0.3}px, ${y * 0.4}px)`;
+            });
+            btn.addEventListener('mouseout', function() {
+                btn.style.transform = 'translate(0px, 0px)';
+            });
+        });
+
+        // 3. CUSTOM NEON CURSOR
         const cursorDot = document.querySelector('.cursor-dot');
         const cursorOutline = document.querySelector('.cursor-outline');
         window.addEventListener('mousemove', (e) => {
             const posX = e.clientX; const posY = e.clientY;
             cursorDot.style.left = `${posX}px`; cursorDot.style.top = `${posY}px`;
-            
-            // Add a slight delay to the outline for a smooth trailing effect
             cursorOutline.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 500, fill: "forwards" });
         });
 
-        // 3. SLOW PREMIUM STARFIELD ENGINE
-        const canvas = document.getElementById('space-canvas');
-        const ctx = canvas.getContext('2d');
-        let width, height, stars = [];
-
-        function initStars() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            stars = [];
-            for (let i = 0; i < 600; i++) { // Slightly fewer stars for a cleaner look
-                stars.push({ x: Math.random() * width - width / 2, y: Math.random() * height - height / 2, z: Math.random() * width });
+        // 4. AMBIENT SPACE SYNTHESIZER (Web Audio API)
+        let audioCtx, oscillator, gainNode, filter;
+        let isPlaying = false;
+        function toggleAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                oscillator = audioCtx.createOscillator();
+                gainNode = audioCtx.createGain();
+                filter = audioCtx.createBiquadFilter();
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.value = 65; // Deep bass frequency
+                
+                filter.type = 'lowpass';
+                filter.frequency.value = 200; // Muffles it to sound like space
+                
+                oscillator.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                gainNode.gain.value = 0;
+                oscillator.start();
+            }
+            if (isPlaying) {
+                gainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 1);
+                isPlaying = false;
+                document.getElementById('audio-icon').className = 'fas fa-volume-mute';
+            } else {
+                audioCtx.resume();
+                gainNode.gain.setTargetAtTime(0.5, audioCtx.currentTime, 2);
+                isPlaying = true;
+                document.getElementById('audio-icon').className = 'fas fa-volume-up';
             }
         }
 
+        // 5. STARFIELD ENGINE
+        const canvas = document.getElementById('space-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height, stars = [];
+        function initStars() {
+            width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight;
+            stars = [];
+            for (let i = 0; i < 600; i++) { stars.push({ x: Math.random() * width - width / 2, y: Math.random() * height - height / 2, z: Math.random() * width }); }
+        }
         function animateStars() {
-            ctx.fillStyle = '#010005'; // Darker background
-            ctx.fillRect(0, 0, width, height);
+            ctx.fillStyle = '#010005'; ctx.fillRect(0, 0, width, height);
             const cx = width / 2; const cy = height / 2;
-
             stars.forEach(star => {
-                star.z -= 0.5; // SLOWED DOWN: Was 2, now 0.5 for premium cinematic feel
+                star.z -= 0.5; 
                 if (star.z <= 0) { star.x = Math.random() * width - cx; star.y = Math.random() * height - cy; star.z = width; }
-
-                const x = cx + star.x * (width / star.z);
-                const y = cy + star.y * (width / star.z);
+                const x = cx + star.x * (width / star.z); const y = cy + star.y * (width / star.z);
                 const radius = (1 - star.z / width) * 2;
-
                 if (Math.random() > 0.95) ctx.fillStyle = '#00f3ff';
                 else if (Math.random() > 0.85) ctx.fillStyle = '#bd00ff';
-                else ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'; // Softer white stars
-
+                else ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
                 ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
             });
             requestAnimationFrame(animateStars);
         }
-        window.addEventListener('resize', initStars);
-        initStars(); animateStars();
+        window.addEventListener('resize', initStars); initStars(); animateStars();
 
-        // 4. SCROLL ANIMATIONS (Fade up on scroll)
+        // 6. SCROLL ANIMATIONS
         document.addEventListener("DOMContentLoaded", function() {
             const reveals = document.querySelectorAll(".reveal");
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add("active"); });
-            }, { threshold: 0.1 }); // Triggers a bit earlier
+            }, { threshold: 0.1 }); 
             reveals.forEach(reveal => observer.observe(reveal));
             setTimeout(() => { document.querySelectorAll('.hero .reveal').forEach(el => el.classList.add('active')); }, 2000);
         });
 
-        // 5. PRICING MODAL LOGIC
+        // 7. PRICING MODAL
         const packageData = {
             'BASIC': { price: '₹60K', desc: 'Perfect for startups and small businesses starting their digital journey. Includes essential branding, basic website setup, and foundational marketing strategies to establish your online presence.' },
             'ELITE': { price: '₹80K', desc: 'Designed for growing businesses ready to scale. Includes advanced design, optimized website performance, and strategic marketing solutions to increase visibility and engagement.' },
             'MASTER': { price: '₹1.2L', desc: 'Built for brands aiming for strong market positioning. Covers premium design, high-performance tech solutions, and result-driven marketing campaigns to accelerate business growth.' },
             'PRO MAX': { price: '₹2.2L', desc: 'The ultimate package for businesses that want complete dominance. Includes full-scale branding, cutting-edge development, high-end content strategy, and aggressive marketing for maximum reach and ROI.' }
         };
-
         function openModal(tier) {
             document.getElementById('modal-title').innerText = tier;
             document.getElementById('modal-price').innerText = packageData[tier].price;
             document.getElementById('modal-desc').innerText = packageData[tier].desc;
             const waLink = `https://wa.me/917995313645?text=Hi%20FENIX,%20I%20am%20interested%20in%20the%20${tier}%20Package.`;
             document.querySelector('.modal-cta-btn').setAttribute('href', waLink);
-
             const modal = document.getElementById('pricing-modal');
             modal.style.display = 'flex';
             setTimeout(() => { modal.classList.add('active'); }, 10);
         }
-
         function closeModal() {
             const modal = document.getElementById('pricing-modal');
             modal.classList.remove('active');
