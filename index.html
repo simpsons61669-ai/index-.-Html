@@ -3,136 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FENIX | Web Customization & Design</title>
+    <title>FENIX | Next-Gen Web Architecture</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
+        /* --- SPACE THEME BASE --- */
         body {
             margin: 0;
-            background-color: #050505;
+            background-color: #020108; /* Deep Space Black/Blue */
             color: #ffffff;
             font-family: 'Helvetica Neue', Arial, sans-serif;
             overflow-x: hidden;
             line-height: 1.6;
         }
 
+        /* 3D Starfield Canvas */
+        #space-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1; /* Keeps it behind everything */
+        }
+
         /* Glassmorphism Navigation */
         .navbar {
             position: fixed; top: 0; width: 100%; padding: 20px 50px;
-            background: rgba(10, 10, 10, 0.7); backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(2, 1, 8, 0.4); backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             z-index: 100; box-sizing: border-box;
             display: flex; justify-content: space-between; align-items: center;
         }
-        .logo { font-size: 28px; font-weight: bold; letter-spacing: 4px; color: #ffffff; }
+        .logo { 
+            font-size: 28px; font-weight: bold; letter-spacing: 4px; 
+            background: linear-gradient(90deg, #ffffff, #bd00ff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
 
         /* Hero Section */
         .hero {
             height: 100vh; display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center;
-            background: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%);
-            padding: 0 20px;
+            padding: 0 20px; position: relative;
         }
-        .hero h1 { font-size: 4.5rem; margin: 0; line-height: 1.1; }
-        .hero p { font-size: 1.2rem; color: #aaaaaa; margin-top: 20px; }
+        .hero h1 { 
+            font-size: 5rem; margin: 0; line-height: 1.1; 
+            text-shadow: 0 0 40px rgba(189, 0, 255, 0.3);
+        }
+        .hero p { font-size: 1.3rem; color: #a3a3c2; margin-top: 20px; letter-spacing: 1px; }
 
         /* About Us Section */
         .about-section { padding: 120px 20px; max-width: 1000px; margin: 0 auto; text-align: center; }
-        .about-section h2 { font-size: 2.5rem; margin-bottom: 30px; }
-        .about-text { font-size: 1.2rem; color: #cccccc; margin-bottom: 60px; }
+        .about-section h2 { font-size: 2.5rem; margin-bottom: 30px; color: #e6e6fa; }
+        .about-text { font-size: 1.2rem; color: #b0b0c0; margin-bottom: 60px; }
+        
         .team-grid { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 60px; }
         .team-member {
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);
             padding: 30px; border-radius: 12px; min-width: 250px;
-            transition: transform 0.3s, background 0.3s;
+            backdrop-filter: blur(5px); transition: transform 0.4s, border-color 0.4s;
         }
-        .team-member:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.08); }
+        .team-member:hover { 
+            transform: translateY(-5px); 
+            border-color: rgba(0, 243, 255, 0.4); /* Cyan glow on hover */
+            box-shadow: 0 10px 30px rgba(0, 243, 255, 0.1);
+        }
         .team-member h4 { margin: 0 0 5px 0; font-size: 1.4rem; }
-        .team-member span { color: #888888; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+        .team-member span { color: #8888aa; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+        
         .rise-tagline {
-            font-size: 3rem; margin-top: 20px;
-            background: linear-gradient(90deg, #ffffff, #666666);
+            font-size: 3.2rem; margin-top: 20px;
+            background: linear-gradient(90deg, #00f3ff, #bd00ff);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
         /* Pricing Section */
-        .pricing-section { padding: 100px 20px; text-align: center; background-color: #080808; }
+        .pricing-section { padding: 100px 20px; text-align: center; }
         .pricing-grid {
             display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;
             margin-top: 50px; max-width: 1200px; margin-left: auto; margin-right: auto;
         }
         .price-card {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(10, 10, 20, 0.6); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 15px; padding: 40px 30px; width: 220px;
-            cursor: pointer; /* Makes it look clickable */
-            transition: all 0.3s ease; position: relative; overflow: hidden;
+            cursor: pointer; transition: all 0.4s ease; position: relative;
         }
         .price-card:hover {
-            transform: translateY(-10px); border-color: #ffffff;
-            box-shadow: 0 10px 30px rgba(255,255,255,0.05);
+            transform: translateY(-10px); 
+            border-color: #bd00ff;
+            box-shadow: 0 0 40px rgba(189, 0, 255, 0.2);
         }
-        .price-card h3 { margin: 0; font-size: 1.5rem; color: #dddddd; text-transform: uppercase; letter-spacing: 2px; }
+        .price-card h3 { margin: 0; font-size: 1.5rem; color: #e6e6fa; text-transform: uppercase; letter-spacing: 2px; }
         .price { font-size: 2.5rem; font-weight: bold; margin: 20px 0; color: #ffffff; }
-        .click-hint { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-top: 10px; display: block; }
+        .click-hint { font-size: 0.8rem; color: #00f3ff; text-transform: uppercase; letter-spacing: 1px; margin-top: 10px; display: block; opacity: 0.7; }
 
-        /* --- THE NEW MODAL (POPUP) UI --- */
+        /* Modal UI (Glassmorphism Space Edition) */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px);
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(20px);
             z-index: 10000; justify-content: center; align-items: center;
             opacity: 0; transition: opacity 0.4s ease;
         }
         .modal-overlay.active { display: flex; opacity: 1; }
-        
         .modal-content {
-            background: #111111; border: 1px solid rgba(255, 255, 255, 0.15);
+            background: linear-gradient(145deg, rgba(20,20,35,0.9), rgba(5,5,10,0.9));
+            border: 1px solid rgba(189, 0, 255, 0.3);
             padding: 50px 40px; border-radius: 20px; max-width: 500px; width: 90%;
             text-align: center; position: relative;
             transform: translateY(50px) scale(0.9); transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            box-shadow: 0 0 50px rgba(189, 0, 255, 0.15);
         }
         .modal-overlay.active .modal-content { transform: translateY(0) scale(1); }
-        
-        .close-btn {
-            position: absolute; top: 20px; right: 25px; font-size: 35px;
-            cursor: pointer; color: #666; line-height: 1; transition: color 0.2s;
-        }
+        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 35px; cursor: pointer; color: #888; transition: color 0.2s; }
         .close-btn:hover { color: #fff; }
-        
-        #modal-title { font-size: 2rem; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 2px; }
+        #modal-title { font-size: 2rem; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 2px; color: #00f3ff; }
         #modal-price { font-size: 2.5rem; color: #fff; margin: 0 0 20px 0; }
-        #modal-desc { font-size: 1.1rem; color: #bbb; line-height: 1.8; margin-bottom: 30px; }
+        #modal-desc { font-size: 1.1rem; color: #b0b0c0; line-height: 1.8; margin-bottom: 30px; }
         
         .modal-cta-btn {
-            display: inline-block; padding: 15px 40px; background: #ffffff; color: #000000;
+            display: inline-block; padding: 15px 40px; 
+            background: linear-gradient(90deg, #bd00ff, #00f3ff); color: #ffffff;
             text-decoration: none; font-weight: bold; font-size: 1.1rem; border-radius: 30px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s; border: none;
         }
-        .modal-cta-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        .modal-cta-btn:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(0, 243, 255, 0.4); }
 
-        /* Floating Contact Buttons */
+        /* Floating Contact */
         .floating-contact { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 9999; }
-        .float-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; text-decoration: none; color: white; font-size: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); transition: transform 0.2s; }
+        .float-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; text-decoration: none; color: white; font-size: 30px; box-shadow: 0 0 20px rgba(0,0,0,0.8); transition: transform 0.2s; }
         .float-btn:hover { transform: scale(1.1); }
-        .call-btn { background-color: #007bff; }
+        .call-btn { background-color: #00f3ff; color: #000; }
         .wa-btn { background-color: #25D366; }
 
-        /* Scroll Animation Classes */
+        /* Scroll Animations */
         .reveal { opacity: 0; transform: translateY(50px); transition: all 1s cubic-bezier(0.25, 1, 0.5, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
         @media (max-width: 768px) {
-            .hero h1 { font-size: 2.5rem; }
+            .hero h1 { font-size: 3rem; }
             .rise-tagline { font-size: 2rem; }
             .floating-contact { bottom: 20px; right: 20px; }
             .float-btn { width: 50px; height: 50px; font-size: 24px; }
-            .navbar { padding: 15px 20px; }
             .modal-content { padding: 40px 20px; }
         }
     </style>
 </head>
 <body>
+
+    <canvas id="space-canvas"></canvas>
 
     <nav class="navbar"><div class="logo">FENIX</div></nav>
 
@@ -152,25 +173,25 @@
             <div class="team-member"><h4>Akhil</h4><span>Design & Social Media</span></div>
         </div>
         <div class="reveal">
-            <p style="color: #aaaaaa; font-size: 1.1rem;">With a track record of successful projects, FENIX is committed to delivering smart, scalable, and result-oriented solutions.</p>
+            <p style="color: #a3a3c2; font-size: 1.1rem;">With a track record of successful projects, FENIX is committed to delivering smart, scalable, and result-oriented solutions.</p>
             <h3 class="rise-tagline">We don’t just build brands — we help them rise.</h3>
         </div>
     </section>
 
     <section class="pricing-section">
-        <h2 class="reveal">Investment Tiers</h2>
+        <h2 class="reveal" style="color: #e6e6fa;">Investment Tiers</h2>
         <div class="pricing-grid reveal">
             <div class="price-card" onclick="openModal('BASIC')">
-                <h3>Basic</h3><p class="price">₹60K</p><span class="click-hint">Click for details</span>
+                <h3>Basic</h3><p class="price">₹60K</p><span class="click-hint">Initialize Module</span>
             </div>
             <div class="price-card" onclick="openModal('ELITE')">
-                <h3>Elite</h3><p class="price">₹80K</p><span class="click-hint">Click for details</span>
+                <h3>Elite</h3><p class="price">₹80K</p><span class="click-hint">Initialize Module</span>
             </div>
             <div class="price-card" onclick="openModal('MASTER')">
-                <h3>Master</h3><p class="price">₹1.2L</p><span class="click-hint">Click for details</span>
+                <h3>Master</h3><p class="price">₹1.2L</p><span class="click-hint">Initialize Module</span>
             </div>
             <div class="price-card" onclick="openModal('PRO MAX')">
-                <h3>Pro Max</h3><p class="price">₹2.2L</p><span class="click-hint">Click for details</span>
+                <h3>Pro Max</h3><p class="price">₹2.2L</p><span class="click-hint">Initialize Module</span>
             </div>
         </div>
     </section>
@@ -181,7 +202,7 @@
             <h2 id="modal-title">Package Name</h2>
             <h3 id="modal-price">₹0</h3>
             <p id="modal-desc">Package details here.</p>
-            <a href="https://wa.me/917995313645" target="_blank" class="modal-cta-btn">Start Project</a>
+            <a href="https://wa.me/917995313645" target="_blank" class="modal-cta-btn">Initiate Sequence</a>
         </div>
     </div>
 
@@ -191,49 +212,84 @@
     </div>
 
     <script>
-        // 1. Scroll Animations
+        // --- 1. 3D STARFIELD ENGINE ---
+        const canvas = document.getElementById('space-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height, stars = [];
+
+        function initStars() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            stars = [];
+            for (let i = 0; i < 800; i++) {
+                stars.push({
+                    x: Math.random() * width - width / 2,
+                    y: Math.random() * height - height / 2,
+                    z: Math.random() * width
+                });
+            }
+        }
+
+        function animateStars() {
+            ctx.fillStyle = '#020108'; // Deep space background
+            ctx.fillRect(0, 0, width, height);
+            
+            const cx = width / 2;
+            const cy = height / 2;
+
+            stars.forEach(star => {
+                star.z -= 2; // Speed of the stars
+                if (star.z <= 0) {
+                    star.x = Math.random() * width - cx;
+                    star.y = Math.random() * height - cy;
+                    star.z = width;
+                }
+
+                const x = cx + star.x * (width / star.z);
+                const y = cy + star.y * (width / star.z);
+                const radius = (1 - star.z / width) * 2.5;
+
+                // Make some stars glow blue/purple
+                if (Math.random() > 0.9) ctx.fillStyle = '#00f3ff';
+                else if (Math.random() > 0.8) ctx.fillStyle = '#bd00ff';
+                else ctx.fillStyle = '#ffffff';
+
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            requestAnimationFrame(animateStars);
+        }
+
+        window.addEventListener('resize', initStars);
+        initStars();
+        animateStars();
+
+        // --- 2. SCROLL REVEALS ---
         document.addEventListener("DOMContentLoaded", function() {
             const reveals = document.querySelectorAll(".reveal");
             const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) { entry.target.classList.add("active"); }
-                });
+                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add("active"); });
             }, { threshold: 0.15 });
-            reveals.forEach(reveal => { observer.observe(reveal); });
+            reveals.forEach(reveal => observer.observe(reveal));
             setTimeout(() => { document.querySelectorAll('.hero .reveal').forEach(el => el.classList.add('active')); }, 100);
         });
 
-        // 2. Pricing Modal Logic (Your Custom Text)
+        // --- 3. PRICING MODAL LOGIC ---
         const packageData = {
-            'BASIC': {
-                price: '₹60K',
-                desc: 'Perfect for startups and small businesses starting their digital journey. Includes essential branding, basic website setup, and foundational marketing strategies to establish your online presence.'
-            },
-            'ELITE': {
-                price: '₹80K',
-                desc: 'Designed for growing businesses ready to scale. Includes advanced design, optimized website performance, and strategic marketing solutions to increase visibility and engagement.'
-            },
-            'MASTER': {
-                price: '₹1.2L',
-                desc: 'Built for brands aiming for strong market positioning. Covers premium design, high-performance tech solutions, and result-driven marketing campaigns to accelerate business growth.'
-            },
-            'PRO MAX': {
-                price: '₹2.2L',
-                desc: 'The ultimate package for businesses that want complete dominance. Includes full-scale branding, cutting-edge development, high-end content strategy, and aggressive marketing for maximum reach and ROI.'
-            }
+            'BASIC': { price: '₹60K', desc: 'Perfect for startups and small businesses starting their digital journey. Includes essential branding, basic website setup, and foundational marketing strategies to establish your online presence.' },
+            'ELITE': { price: '₹80K', desc: 'Designed for growing businesses ready to scale. Includes advanced design, optimized website performance, and strategic marketing solutions to increase visibility and engagement.' },
+            'MASTER': { price: '₹1.2L', desc: 'Built for brands aiming for strong market positioning. Covers premium design, high-performance tech solutions, and result-driven marketing campaigns to accelerate business growth.' },
+            'PRO MAX': { price: '₹2.2L', desc: 'The ultimate package for businesses that want complete dominance. Includes full-scale branding, cutting-edge development, high-end content strategy, and aggressive marketing for maximum reach and ROI.' }
         };
 
         function openModal(tier) {
-            // Fill the popup with the correct data
             document.getElementById('modal-title').innerText = tier;
             document.getElementById('modal-price').innerText = packageData[tier].price;
             document.getElementById('modal-desc').innerText = packageData[tier].desc;
-            
-            // Customize the WhatsApp message based on the package
             const waLink = `https://wa.me/917995313645?text=Hi%20FENIX,%20I%20am%20interested%20in%20the%20${tier}%20Package.`;
             document.querySelector('.modal-cta-btn').setAttribute('href', waLink);
 
-            // Show the modal smoothly
             const modal = document.getElementById('pricing-modal');
             modal.style.display = 'flex';
             setTimeout(() => { modal.classList.add('active'); }, 10);
@@ -242,9 +298,8 @@
         function closeModal() {
             const modal = document.getElementById('pricing-modal');
             modal.classList.remove('active');
-            setTimeout(() => { modal.style.display = 'none'; }, 400); // Waits for the fade-out animation
+            setTimeout(() => { modal.style.display = 'none'; }, 400);
         }
     </script>
-
 </body>
 </html>
