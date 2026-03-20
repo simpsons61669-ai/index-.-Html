@@ -9,94 +9,227 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- 1. PREMIUM BASE & TYPOGRAPHY --- */
-        body { margin: 0; background-color: #010005; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; overflow-x: hidden; line-height: 1.7; cursor: none; -webkit-font-smoothing: antialiased; }
+        /* =========================================
+           1. CORE VARIABLES & THEME
+           ========================================= */
+        :root {
+            --bg-deep-space: #010005;
+            --neon-cyan: #00f3ff;
+            --neon-purple: #bd00ff;
+            --text-light: #ffffff;
+            --text-muted: #8888aa;
+            --glass-bg: rgba(15, 15, 25, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --transition-smooth: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        body { 
+            margin: 0; 
+            background-color: var(--bg-deep-space); 
+            color: var(--text-light); 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            overflow-x: hidden; 
+            line-height: 1.7; 
+            cursor: none; 
+            -webkit-font-smoothing: antialiased; 
+        }
+
+        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #010005; }
-        ::-webkit-scrollbar-thumb { background: #bd00ff; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #00f3ff; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep-space); }
+        ::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--neon-cyan); }
 
-        #space-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; }
+        /* Hardware Accelerated Canvas */
+        #space-canvas { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            z-index: -1; will-change: transform; transform: translateZ(0); 
+        }
 
-        /* --- 2. CURSOR (Hidden on mobile) --- */
-        .cursor-dot { width: 6px; height: 6px; background-color: #00f3ff; position: fixed; border-radius: 50%; z-index: 99999; pointer-events: none; transform: translate(-50%, -50%); box-shadow: 0 0 10px #00f3ff; }
-        .cursor-outline { width: 40px; height: 40px; border: 1px solid rgba(189, 0, 255, 0.5); position: fixed; border-radius: 50%; z-index: 99999; pointer-events: none; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s, background-color 0.2s; }
-        @media (hover: none) and (pointer: coarse) { .cursor-dot, .cursor-outline { display: none !important; } body { cursor: auto; } }
+        /* =========================================
+           2. CUSTOM CURSOR
+           ========================================= */
+        .cursor-dot { 
+            width: 6px; height: 6px; background-color: var(--neon-cyan); 
+            position: fixed; left: 0; top: 0; border-radius: 50%; z-index: 99999; 
+            pointer-events: none; transform: translate3d(-50%, -50%, 0); 
+            box-shadow: 0 0 10px var(--neon-cyan); will-change: transform; 
+        }
+        .cursor-outline { 
+            width: 40px; height: 40px; border: 1px solid rgba(189, 0, 255, 0.5); 
+            position: fixed; left: 0; top: 0; border-radius: 50%; z-index: 99999; 
+            pointer-events: none; transform: translate3d(-50%, -50%, 0); 
+            transition: width 0.2s, height 0.2s; will-change: transform; 
+        }
+        @media (hover: none) and (pointer: coarse) { 
+            .cursor-dot, .cursor-outline { display: none !important; } 
+            body { cursor: auto; } 
+        }
 
-        /* --- 3. NAVIGATION --- */
-        .navbar { position: fixed; top: 0; width: 100%; padding: 20px 5vw; background: rgba(1, 0, 5, 0.6); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); z-index: 100; box-sizing: border-box; display: flex; justify-content: center; align-items: center; }
-        .logo { font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #fff; text-transform: uppercase; }
+        /* =========================================
+           3. NAVIGATION
+           ========================================= */
+        .navbar { 
+            position: fixed; top: 0; width: 100%; padding: 25px 5vw; 
+            background: transparent; /* Starts transparent */
+            transition: background 0.4s ease, padding 0.4s ease, backdrop-filter 0.4s ease;
+            z-index: 100; box-sizing: border-box; display: flex; 
+            justify-content: center; align-items: center; 
+        }
+        .navbar.scrolled {
+            padding: 15px 5vw;
+            background: rgba(1, 0, 5, 0.8);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .logo { 
+            font-size: 26px; font-weight: 800; letter-spacing: 5px; 
+            color: var(--text-light); text-transform: uppercase; cursor: pointer;
+        }
 
-        /* --- 4. HERO SECTION --- */
-        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 5vw; position: relative; background: radial-gradient(circle at center, rgba(30,10,50,0.4) 0%, transparent 60%); }
+        /* =========================================
+           4. HERO SECTION
+           ========================================= */
+        .hero { 
+            height: 100vh; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; text-align: center; 
+            padding: 0 5vw; position: relative; 
+            background: radial-gradient(circle at center, rgba(30,10,50,0.4) 0%, transparent 60%); 
+        }
         .hero-title-container { overflow: hidden; padding-bottom: 10px; }
-        .hero h1 { font-size: clamp(3rem, 8vw, 6rem); margin: 0; line-height: 1.1; text-shadow: 0 0 50px rgba(189, 0, 255, 0.3); transform: translateY(100%); opacity: 0; font-weight: 800; letter-spacing: -1px; }
-        .hero p { font-size: clamp(1.1rem, 3vw, 1.5rem); color: #a3a3c2; margin-top: 25px; letter-spacing: 1px; opacity: 0; max-width: 600px; font-weight: 300; }
-        .hero-btn-container { opacity: 0; margin-top: 40px; }
+        .hero h1 { 
+            font-size: clamp(3rem, 8vw, 6rem); margin: 0; line-height: 1.1; 
+            text-shadow: 0 0 50px rgba(189, 0, 255, 0.3); transform: translateY(100%); 
+            opacity: 0; font-weight: 800; letter-spacing: -1px; will-change: transform, opacity; 
+        }
+        .hero p { 
+            font-size: clamp(1.1rem, 3vw, 1.5rem); color: var(--text-muted); 
+            margin-top: 25px; letter-spacing: 1px; opacity: 0; max-width: 600px; 
+            font-weight: 300; will-change: opacity; 
+        }
+        .hero-btn-container { opacity: 0; margin-top: 40px; will-change: opacity, transform; }
 
-        /* --- 5. GENERAL SECTIONS --- */
+        /* =========================================
+           5. GLOBAL LAYOUT & CARDS
+           ========================================= */
         section { padding: 150px 5vw; max-width: 1200px; margin: 0 auto; text-align: center; }
-        h2.section-title { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 60px; color: #ffffff; text-transform: uppercase; letter-spacing: 4px; font-weight: 700; }
+        h2.section-title { 
+            font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 60px; 
+            color: var(--text-light); text-transform: uppercase; 
+            letter-spacing: 4px; font-weight: 700; 
+        }
         
         .glass-grid { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
-        .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 50px 30px; border-radius: 20px; flex: 1; min-width: 280px; max-width: 350px; backdrop-filter: blur(12px); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.4s; text-align: left; }
-        .glass-card:hover { transform: translateY(-10px); border-color: rgba(0, 243, 255, 0.4); box-shadow: 0 20px 50px rgba(0, 243, 255, 0.05); }
-        .glass-card h3 { color: #fff; font-size: 1.5rem; margin-top: 0; margin-bottom: 15px; font-weight: 600; }
-        .glass-card p { color: #8888aa; font-size: 1.05rem; line-height: 1.8; margin: 0; font-weight: 300; }
-        .glass-card i { font-size: 2.5rem; color: #bd00ff; margin-bottom: 25px; display: block; }
+        .glass-card { 
+            background: var(--glass-bg); border: 1px solid var(--glass-border); 
+            padding: 50px 30px; border-radius: 20px; flex: 1; 
+            min-width: 280px; max-width: 350px; 
+            transition: var(--transition-smooth); text-align: left; 
+            will-change: transform; transform: translateZ(0); 
+        }
+        .glass-card:hover { 
+            transform: translateY(-10px); border-color: rgba(0, 243, 255, 0.4); 
+            box-shadow: 0 20px 50px rgba(0, 243, 255, 0.05); 
+        }
+        .glass-card h3 { color: var(--text-light); font-size: 1.5rem; margin-top: 0; margin-bottom: 15px; font-weight: 600; }
+        .glass-card p { color: var(--text-muted); font-size: 1.05rem; line-height: 1.8; margin: 0; font-weight: 300; }
+        .glass-card i { font-size: 2.5rem; color: var(--neon-purple); margin-bottom: 25px; display: block; }
 
-        .rise-tagline { font-size: clamp(2rem, 6vw, 4rem); margin-top: 60px; background: linear-gradient(90deg, #00f3ff, #bd00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.2; font-weight: 800; letter-spacing: -1px; }
+        .rise-tagline { 
+            font-size: clamp(2rem, 6vw, 4rem); margin-top: 60px; 
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple)); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+            line-height: 1.2; font-weight: 800; letter-spacing: -1px; 
+        }
 
-        /* --- 6. PORTFOLIO (Desktop Horizontal, Mobile Vertical) --- */
+        /* =========================================
+           6. HORIZONTAL PORTFOLIO SCROLL
+           ========================================= */
         .horizontal-section { display: flex; flex-direction: column; justify-content: center; overflow: hidden; max-width: 100%; padding-left: 0; padding-right: 0; }
-        .horizontal-container { display: flex; align-items: center; gap: 5vw; }
-        .horizontal-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(10px); flex-shrink: 0; position: relative; overflow: hidden; transition: border-color 0.4s; }
-        .horizontal-item:hover { border-color: #bd00ff; }
+        .horizontal-container { display: flex; align-items: center; gap: 5vw; will-change: transform; }
+        .horizontal-item { 
+            background: rgba(15, 15, 25, 0.9); border: 1px solid var(--glass-border); 
+            border-radius: 24px; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; flex-shrink: 0; 
+            position: relative; overflow: hidden; transition: border-color 0.4s; 
+            will-change: transform; transform: translateZ(0); 
+        }
+        .horizontal-item:hover { border-color: var(--neon-purple); }
         .horizontal-item h3 { font-size: clamp(1.8rem, 4vw, 2.5rem); margin: 0; z-index: 2; font-weight: 700; text-shadow: 0 4px 20px rgba(0,0,0,0.8); }
-        .horizontal-item p { color: #00f3ff; letter-spacing: 2px; text-transform: uppercase; z-index: 2; font-size: 0.9rem; margin-top: 10px; font-weight: 600; }
-        .portfolio-bg { position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(189,0,255,0.15) 0%, rgba(0,0,0,0.9) 100%); z-index: 1; transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1); }
+        .horizontal-item p { color: var(--neon-cyan); letter-spacing: 2px; text-transform: uppercase; z-index: 2; font-size: 0.9rem; margin-top: 10px; font-weight: 600; }
+        .portfolio-bg { 
+            position: absolute; inset: 0; 
+            background: radial-gradient(circle at center, rgba(189,0,255,0.15) 0%, rgba(0,0,0,0.9) 100%); 
+            z-index: 1; transition: transform 0.4s; 
+        }
         .horizontal-item:hover .portfolio-bg { transform: scale(1.05); }
 
-        /* Desktop specific portfolio styles */
         @media (min-width: 769px) {
             .horizontal-section { height: 100vh; }
             .horizontal-container { width: 300vw; height: 60vh; padding-left: 10vw; }
             .horizontal-item { width: 60vw; height: 50vh; }
         }
-        /* Mobile specific portfolio styles */
         @media (max-width: 768px) {
             .horizontal-section { height: auto; padding: 100px 5vw; }
             .horizontal-container { flex-direction: column; width: 100%; gap: 30px; }
             .horizontal-item { width: 100%; height: 350px; }
         }
 
-        /* --- 7. PRICING --- */
+        /* =========================================
+           7. PRICING & MODAL
+           ========================================= */
         .price-card { text-align: center; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; }
-        .price-card:hover { border-color: #bd00ff; box-shadow: 0 15px 40px rgba(189, 0, 255, 0.15); }
-        .price-amount { font-size: 3.5rem; font-weight: 800; margin: 20px 0; color: #ffffff; letter-spacing: -2px; }
+        .price-card:hover { border-color: var(--neon-purple); box-shadow: 0 15px 40px rgba(189, 0, 255, 0.15); }
+        .price-amount { font-size: 3.5rem; font-weight: 800; margin: 20px 0; color: var(--text-light); letter-spacing: -2px; }
 
-        /* --- 8. MODALS & BUTTONS --- */
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(20px); z-index: 10000; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.4s ease; padding: 20px; }
+        .modal-overlay { 
+            display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); 
+            z-index: 10000; justify-content: center; align-items: center; 
+            opacity: 0; transition: opacity 0.3s ease; padding: 20px; 
+        }
         .modal-overlay.active { display: flex; opacity: 1; }
-        .modal-content { background: linear-gradient(145deg, rgba(15,10,25,0.95), rgba(5,2,10,0.95)); border: 1px solid rgba(189, 0, 255, 0.4); padding: 50px 40px; border-radius: 24px; max-width: 500px; width: 100%; text-align: center; position: relative; transform: translateY(50px) scale(0.95); transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 20px 60px rgba(0,0,0,0.5); box-sizing: border-box; }
+        .modal-content { 
+            background: linear-gradient(145deg, rgba(15,10,25,0.95), rgba(5,2,10,0.95)); 
+            border: 1px solid rgba(189, 0, 255, 0.4); padding: 50px 40px; 
+            border-radius: 24px; max-width: 500px; width: 100%; text-align: center; 
+            position: relative; transform: translateY(50px) scale(0.95); 
+            transition: var(--transition-smooth); box-sizing: border-box; 
+        }
         .modal-overlay.active .modal-content { transform: translateY(0) scale(1); }
         .close-btn { position: absolute; top: 20px; right: 25px; font-size: 40px; cursor: pointer; color: #666; transition: color 0.2s; line-height: 1; }
-        .close-btn:hover { color: #fff; }
-        #modal-title { font-size: 2rem; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 3px; color: #00f3ff; font-weight: 800; }
-        #modal-price { font-size: 3rem; color: #fff; margin: 0 0 20px 0; font-weight: 800; letter-spacing: -2px; }
+        .close-btn:hover { color: var(--text-light); }
+        
+        #modal-title { font-size: 2rem; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 3px; color: var(--neon-cyan); font-weight: 800; }
+        #modal-price { font-size: 3rem; color: var(--text-light); margin: 0 0 20px 0; font-weight: 800; letter-spacing: -2px; }
         #modal-desc { font-size: 1.1rem; color: #b0b0c0; line-height: 1.8; margin-bottom: 40px; font-weight: 300; }
         
-        .magnetic-btn { display: inline-block; padding: 18px 45px; background: linear-gradient(90deg, #bd00ff, #00f3ff); color: #ffffff; text-decoration: none; font-weight: 700; font-size: 1.1rem; border-radius: 40px; border: none; cursor: pointer; z-index: 10; transition: box-shadow 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        /* =========================================
+           8. BUTTONS & UTILITIES
+           ========================================= */
+        .magnetic-btn { 
+            display: inline-block; padding: 18px 45px; 
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan)); 
+            color: var(--text-light); text-decoration: none; font-weight: 700; 
+            font-size: 1.1rem; border-radius: 40px; border: none; cursor: pointer; 
+            z-index: 10; transition: box-shadow 0.3s; text-transform: uppercase; 
+            letter-spacing: 1px; will-change: transform; 
+        }
         .magnetic-btn:hover { box-shadow: 0 0 30px rgba(0, 243, 255, 0.5); }
 
-        /* Floating Controls */
         .floating-contact { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 9999; }
-        .float-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; text-decoration: none; color: white; font-size: 28px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.1); }
-        .float-btn:hover { transform: scale(1.1); border-color: #00f3ff; }
-        .call-btn { background-color: #00f3ff; color: #000; }
+        .float-btn { 
+            width: 60px; height: 60px; border-radius: 50%; display: flex; 
+            justify-content: center; align-items: center; text-decoration: none; 
+            color: white; font-size: 28px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); 
+            transition: transform 0.2s; border: 1px solid var(--glass-border); 
+        }
+        .float-btn:hover { transform: scale(1.1); border-color: var(--neon-cyan); }
+        .call-btn { background-color: var(--neon-cyan); color: #000; }
         .wa-btn { background-color: #25D366; }
 
-        .reveal { opacity: 0; transform: translateY(40px); }
+        .reveal { opacity: 0; transform: translateY(40px); will-change: opacity, transform; }
 
         @media (max-width: 768px) {
             section { padding: 100px 5vw; }
@@ -110,10 +243,9 @@
 
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
-
     <canvas id="space-canvas"></canvas>
-
-    <nav class="navbar"><div class="logo">FENIX</div></nav>
+    
+    <nav class="navbar" id="main-nav"><div class="logo">FENIX</div></nav>
 
     <header class="hero">
         <div class="hero-title-container"><h1 class="hero-text">Digital Reality,</h1></div>
@@ -171,41 +303,20 @@
         <h2 class="section-title reveal">Investment Tiers</h2>
         <div class="glass-grid reveal">
             <div class="glass-card price-card" onclick="openModal('BASIC')">
-                <div>
-                    <h3>Basic</h3><p style="margin-bottom: 20px;">Essential digital presence.</p>
-                </div>
-                <div>
-                    <p class="price-amount">₹60K</p>
-                    <span style="color:#00f3ff; font-size:0.8rem; text-transform:uppercase; font-weight: bold;">Initialize</span>
-                </div>
+                <div><h3>Basic</h3><p style="margin-bottom: 20px;">Essential digital presence.</p></div>
+                <div><p class="price-amount">₹60K</p><span style="color:var(--neon-cyan); font-size:0.8rem; text-transform:uppercase; font-weight: bold;">Initialize</span></div>
             </div>
             <div class="glass-card price-card" onclick="openModal('ELITE')">
-                <div>
-                    <h3>Elite</h3><p style="margin-bottom: 20px;">Advanced scalable design.</p>
-                </div>
-                <div>
-                    <p class="price-amount">₹80K</p>
-                    <span style="color:#00f3ff; font-size:0.8rem; text-transform:uppercase; font-weight: bold;">Initialize</span>
-                </div>
+                <div><h3>Elite</h3><p style="margin-bottom: 20px;">Advanced scalable design.</p></div>
+                <div><p class="price-amount">₹80K</p><span style="color:var(--neon-cyan); font-size:0.8rem; text-transform:uppercase; font-weight: bold;">Initialize</span></div>
             </div>
             <div class="glass-card price-card" onclick="openModal('MASTER')">
-                <div>
-                    <h3>Master</h3><p style="margin-bottom: 20px;">Premium interactive tech.</p>
-                </div>
-                <div>
-                    <p class="price-amount">₹1.2L</p>
-                    <span style="color:#00f3ff; font-size:0.8rem; text-transform:uppercase; font-weight: bold;">Initialize</span>
-                </div>
+                <div><h3>Master</h3><p style="margin-bottom: 20px;">Premium interactive tech.</p></div>
+                <div><p class="price-amount">₹1.2L</p><span style="color:var(--neon-cyan); font-size:0.8rem; text-transform:uppercase; font-weight: bold;">Initialize</span></div>
             </div>
-            <div class="glass-card price-card" onclick="openModal('PRO MAX')" style="border-color: rgba(189, 0, 255, 0.4); background: rgba(189, 0, 255, 0.05);">
-                <div>
-                    <i class="fas fa-crown" style="font-size: 1.5rem; color:#bd00ff; margin-bottom:15px;"></i>
-                    <h3>Pro Max</h3><p style="margin-bottom: 20px;">Ultimate brand dominance.</p>
-                </div>
-                <div>
-                    <p class="price-amount">₹2.2L</p>
-                    <span style="color:#00f3ff; font-size:0.8rem; text-transform:uppercase; font-weight: bold;">Initialize</span>
-                </div>
+            <div class="glass-card price-card" onclick="openModal('PRO MAX')" style="border-color: rgba(189, 0, 255, 0.4); background: rgba(25, 10, 35, 0.9);">
+                <div><i class="fas fa-crown" style="font-size: 1.5rem; color:var(--neon-purple); margin-bottom:15px;"></i><h3>Pro Max</h3><p style="margin-bottom: 20px;">Ultimate brand dominance.</p></div>
+                <div><p class="price-amount">₹2.2L</p><span style="color:var(--neon-cyan); font-size:0.8rem; text-transform:uppercase; font-weight: bold;">Initialize</span></div>
             </div>
         </div>
         <div class="reveal">
@@ -232,114 +343,132 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     
     <script>
-        gsap.registerPlugin(ScrollTrigger);
-
-        // 1. KINETIC HERO ANIMATION
-        window.addEventListener("load", () => {
-            const tl = gsap.timeline();
-            tl.to(".hero-text", { y: "0%", opacity: 1, duration: 1.2, stagger: 0.15, ease: "power4.out" })
-              .to(".hero-subtext", { opacity: 1, duration: 1, ease: "power2.out" }, "-=0.6")
-              .to(".hero-btn-container", { opacity: 1, y: -10, duration: 0.8, ease: "power3.out" }, "-=0.6");
+        // 1. DYNAMIC NAVBAR SCRIPT
+        const nav = document.getElementById('main-nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) { nav.classList.add('scrolled'); } 
+            else { nav.classList.remove('scrolled'); }
         });
 
-        // 2. MOBILE RESPONSIVE GSAP (MatchMedia)
+        // 2. GSAP INITIALIZATION
+        gsap.registerPlugin(ScrollTrigger);
+
+        window.addEventListener("load", () => {
+            const tl = gsap.timeline();
+            tl.to(".hero-text", { y: "0%", opacity: 1, duration: 1, stagger: 0.15, ease: "power3.out" })
+              .to(".hero-subtext", { opacity: 1, duration: 0.8, ease: "power2.out" }, "-=0.5")
+              .to(".hero-btn-container", { opacity: 1, y: -10, duration: 0.6, ease: "power2.out" }, "-=0.5");
+        });
+
         let mm = gsap.matchMedia();
 
         mm.add("(min-width: 769px)", () => {
-            // Desktop: Horizontal Scroll
             const horizontalContainer = document.querySelector(".horizontal-container");
             gsap.to(horizontalContainer, {
                 x: () => -(horizontalContainer.scrollWidth - window.innerWidth) + "px",
                 ease: "none",
-                scrollTrigger: { trigger: ".horizontal-section", pin: true, scrub: 1, end: () => "+=" + horizontalContainer.scrollWidth }
+                scrollTrigger: { 
+                    trigger: ".horizontal-section", pin: true, scrub: 0.5, 
+                    end: () => "+=" + horizontalContainer.scrollWidth, invalidateOnRefresh: true
+                }
             });
         });
 
         mm.add("(max-width: 768px)", () => {
-            // Mobile: Vertical Stack Fade In
             gsap.utils.toArray('.item-reveal').forEach(item => {
                 gsap.fromTo(item, 
                     { opacity: 0, y: 30 },
-                    { opacity: 1, y: 0, duration: 0.8, ease: "power3.out", scrollTrigger: { trigger: item, start: "top 85%" } }
+                    { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", scrollTrigger: { trigger: item, start: "top 85%" } }
                 );
             });
         });
 
-        // 3. STANDARD FADE REVEALS
         gsap.utils.toArray('.reveal').forEach(element => {
-            gsap.to(element, { opacity: 1, y: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: element, start: "top 85%" } });
+            gsap.to(element, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: element, start: "top 85%" } });
         });
 
-        // 4. MAGNETIC BUTTONS (Desktop Only)
+        // 3. HARDWARE-ACCELERATED CURSOR & BUTTONS (Desktop Only)
         if (window.innerWidth > 768) {
+            const cursorDot = document.querySelector('.cursor-dot');
+            const cursorOutline = document.querySelector('.cursor-outline');
+            
+            window.addEventListener('mousemove', (e) => {
+                cursorDot.style.transform = `translate3d(calc(${e.clientX}px - 50%), calc(${e.clientY}px - 50%), 0)`;
+                cursorOutline.style.transform = `translate3d(calc(${e.clientX}px - 50%), calc(${e.clientY}px - 50%), 0)`;
+            }, { passive: true });
+
             const magneticBtns = document.querySelectorAll('.magnetic-btn');
             magneticBtns.forEach(btn => {
                 btn.addEventListener('mousemove', (e) => {
                     const position = btn.getBoundingClientRect();
                     const x = e.clientX - position.left - position.width / 2;
                     const y = e.clientY - position.top - position.height / 2;
-                    btn.style.transform = `translate(${x * 0.3}px, ${y * 0.4}px)`;
+                    btn.style.transform = `translate3d(${x * 0.3}px, ${y * 0.4}px, 0)`;
                 });
-                btn.addEventListener('mouseout', () => { btn.style.transform = 'translate(0px, 0px)'; });
+                btn.addEventListener('mouseout', () => { btn.style.transform = 'translate3d(0px, 0px, 0)'; });
             });
         }
 
-        // 5. CUSTOM CURSOR
-        const cursorDot = document.querySelector('.cursor-dot');
-        const cursorOutline = document.querySelector('.cursor-outline');
-        window.addEventListener('mousemove', (e) => {
-            const posX = e.clientX; const posY = e.clientY;
-            cursorDot.style.left = `${posX}px`; cursorDot.style.top = `${posY}px`;
-            cursorOutline.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 500, fill: "forwards" });
-        });
-
-        // 6. RESPONSIVE STARFIELD ENGINE
+        // 4. DEBOUNCED STARFIELD ENGINE (Eliminates mobile resize lag)
         const canvas = document.getElementById('space-canvas');
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { alpha: false });
         let width, height, stars = [];
+        let resizeTimeout;
         
         function initStars() {
             width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight;
             stars = [];
-            // Optimize: Less stars on mobile to save battery and increase performance
-            const numStars = width < 768 ? 250 : 600; 
+            const numStars = width < 768 ? 200 : 500; 
             for (let i = 0; i < numStars; i++) { stars.push({ x: Math.random() * width - width / 2, y: Math.random() * height - height / 2, z: Math.random() * width }); }
         }
+        
         function animateStars() {
             ctx.fillStyle = '#010005'; ctx.fillRect(0, 0, width, height);
             const cx = width / 2; const cy = height / 2;
+            
             stars.forEach(star => {
-                star.z -= 0.5; 
+                star.z -= 0.8; 
                 if (star.z <= 0) { star.x = Math.random() * width - cx; star.y = Math.random() * height - cy; star.z = width; }
                 const x = cx + star.x * (width / star.z); const y = cy + star.y * (width / star.z);
-                const radius = (1 - star.z / width) * 2;
-                if (Math.random() > 0.95) ctx.fillStyle = '#00f3ff'; else if (Math.random() > 0.85) ctx.fillStyle = '#bd00ff'; else ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-                ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
+                const size = (1 - star.z / width) * 3;
+                
+                if (Math.random() > 0.95) ctx.fillStyle = '#00f3ff'; else if (Math.random() > 0.85) ctx.fillStyle = '#bd00ff'; else ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.fillRect(x, y, size, size);
             });
             requestAnimationFrame(animateStars);
         }
-        window.addEventListener('resize', initStars); initStars(); animateStars();
 
-        // 7. PRICING MODAL
+        // The Debounce function stops the canvas from redrawing a million times while resizing
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(initStars, 200);
+        }, { passive: true });
+        
+        initStars(); animateStars();
+
+        // 5. MODAL DATA ENGINE
         const packageData = {
             'BASIC': { price: '₹60K', desc: 'Perfect for startups starting their digital journey. Essential branding and basic setup.' },
             'ELITE': { price: '₹80K', desc: 'Designed for growing businesses ready to scale. Advanced design and optimized performance.' },
             'MASTER': { price: '₹1.2L', desc: 'Built for brands aiming for strong market positioning. Premium design and tech solutions.' },
             'PRO MAX': { price: '₹2.2L', desc: 'The ultimate package. Full-scale branding, cutting-edge development, and aggressive marketing.' }
         };
+        
         function openModal(tier) {
             document.getElementById('modal-title').innerText = tier;
             document.getElementById('modal-price').innerText = packageData[tier].price;
             document.getElementById('modal-desc').innerText = packageData[tier].desc;
             document.querySelector('.modal-cta-btn').setAttribute('href', `https://wa.me/917995313645?text=Hi%20FENIX,%20I%20am%20interested%20in%20the%20${tier}%20Package.`);
+            
             const modal = document.getElementById('pricing-modal');
             modal.style.display = 'flex';
             setTimeout(() => { modal.classList.add('active'); }, 10);
         }
+        
         function closeModal() {
             const modal = document.getElementById('pricing-modal');
             modal.classList.remove('active');
-            setTimeout(() => { modal.style.display = 'none'; }, 400);
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
         }
     </script>
 </body>
