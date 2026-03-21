@@ -1,137 +1,73 @@
-/* --- Base Theme (Dark & Modern) --- */
+/* --- CORE STYLES --- */
+:root {
+    --bg: #050507;
+    --cyan: #00f3ff;
+    --purple: #bd00ff;
+    --glass: rgba(20, 20, 25, 0.6);
+    --border: rgba(255, 255, 255, 0.08);
+}
+
 body {
-    margin: 0;
-    background-color: #050505;
-    color: #ffffff;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    overflow-x: hidden;
+    margin: 0; background: var(--bg); color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
-/* --- Glassmorphism Navigation --- */
+/* --- CANVAS BACKGROUND --- */
+#particle-canvas {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: -1; pointer-events: none;
+}
+
+/* --- NAVIGATION --- */
 .navbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    padding: 20px 50px;
-    background: rgba(10, 10, 10, 0.6);
-    backdrop-filter: blur(15px); /* This gives the frosted glass look */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 100;
+    position: fixed; top: 0; width: 100%; padding: 30px 5vw;
+    display: flex; justify-content: space-between; align-items: center;
+    box-sizing: border-box; z-index: 100;
+    backdrop-filter: blur(10px); border-bottom: 1px solid transparent;
+    transition: all 0.4s ease;
 }
-
-.logo {
-    font-size: 24px;
-    font-weight: bold;
-    letter-spacing: 3px;
+.navbar.scrolled {
+    padding: 15px 5vw; background: rgba(5,5,7,0.8); border-bottom: 1px solid var(--border);
 }
+.logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 4px; }
+.nav-links a { color: #fff; text-decoration: none; margin-left: 30px; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;}
 
-/* --- Hero Section --- */
+/* --- HERO --- */
 .hero {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    background: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%);
+    height: 100vh; display: flex; align-items: center; padding: 0 5vw;
+}
+.hero-title {
+    font-size: clamp(4rem, 8vw, 7rem); margin: 0; line-height: 1.05;
+    font-weight: 800; letter-spacing: -2px;
+}
+.hero-subtitle {
+    font-size: clamp(1.2rem, 2vw, 1.5rem); color: #888; margin-top: 30px;
+    max-width: 600px; line-height: 1.5;
 }
 
-.hero h1 {
-    font-size: 5rem;
-    margin: 0;
-    line-height: 1.1;
-}
+/* --- SECTIONS & CARDS --- */
+section { padding: 150px 5vw; max-width: 1400px; margin: 0 auto; }
+.section-title { font-size: 3rem; margin-bottom: 60px; font-weight: 700; letter-spacing: -1px; }
 
-.hero p {
-    font-size: 1.2rem;
-    color: #aaaaaa;
-    margin-top: 20px;
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+.glass-card {
+    background: var(--glass); border: 1px solid var(--border);
+    padding: 50px 40px; border-radius: 20px; backdrop-filter: blur(15px);
+    transition: transform 0.4s, border-color 0.4s;
 }
+.glass-card:hover { transform: translateY(-10px); border-color: var(--cyan); }
+.glass-card i { font-size: 2.5rem; color: var(--purple); margin-bottom: 20px; }
+.glass-card h3 { font-size: 1.5rem; margin: 0 0 10px 0; }
+.glass-card p { color: #888; margin: 0; line-height: 1.6; }
 
-/* --- Pricing Tiers --- */
-.pricing-section {
-    padding: 100px 20px;
-    text-align: center;
+/* --- PRICING SPECIFICS --- */
+.price-card { display: flex; flex-direction: column; justify-content: space-between; }
+.price { font-size: 3.5rem; font-weight: 800; margin: 20px 0 40px 0; }
+.pro-max { border-color: rgba(189, 0, 255, 0.4); background: linear-gradient(180deg, rgba(20,20,25,0.6) 0%, rgba(189,0,255,0.05) 100%); }
+.action-btn {
+    display: block; text-align: center; padding: 15px; border-radius: 30px;
+    background: #fff; color: #000; text-decoration: none; font-weight: 700;
+    transition: all 0.3s;
 }
-
-.pricing-grid {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    flex-wrap: wrap;
-    margin-top: 50px;
-}
-
-.price-card {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    padding: 40px 30px;
-    width: 250px;
-    transition: transform 0.3s ease;
-}
-
-.price-card:hover {
-    transform: translateY(-10px);
-    background: rgba(255, 255, 255, 0.08);
-}
-
-.price-card h3 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: #dddddd;
-}
-
-.price {
-    font-size: 2.5rem;
-    font-weight: bold;
-    margin: 20px 0;
-}
-
-.details {
-    color: #888888;
-}
-
-/* --- FLOATING CONTACT BUTTONS --- */
-.floating-contact {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    z-index: 9999; /* Keeps them on top of everything */
-}
-
-.float-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-decoration: none;
-    color: white;
-    font-size: 30px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-    transition: transform 0.2s;
-}
-
-.float-btn:hover {
-    transform: scale(1.1); /* Slightly enlarges when hovered */
-}
-
-.call-btn {
-    background-color: #007bff; /* Professional Blue */
-}
-
-.wa-btn {
-    background-color: #25D366; /* Official WhatsApp Green */
-}
-
-/* --- Mobile Adjustments --- */
-@media (max-width: 768px) {
-    .hero h1 { font-size: 3rem; }
-    .floating-contact { bottom: 20px; right: 20px; }
-    .float-btn { width: 50px; height: 50px; font-size: 24px; }
-}
+.action-btn:hover { background: var(--cyan); box-shadow: 0 0 20px rgba(0,243,255,0.4); }
