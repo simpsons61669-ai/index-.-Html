@@ -2,473 +2,403 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FENIX | Next-Gen Web Architecture</title>
-    <meta name="description" content="Digital reality architected by AI.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FENIX | OS</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         /* =========================================
-           1. CORE VARIABLES & THEME
+           1. CORE APP VARIABLES & RESET
            ========================================= */
         :root {
-            --bg-deep-space: #010005;
-            --neon-cyan: #00f3ff;
-            --neon-purple: #bd00ff;
-            --text-light: #ffffff;
-            --text-muted: #8888aa;
-            --glass-bg: rgba(15, 15, 25, 0.85);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --transition-smooth: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            --bg-void: #0a0a0c;
+            --brand-orange: #ff5e00;
+            --brand-orange-glow: rgba(255, 94, 0, 0.5);
+            --panel-bg: #141416;
+            --panel-border: rgba(255, 255, 255, 0.05);
+            --text-main: #ffffff;
+            --text-muted: #8a8a93;
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body { 
-            margin: 0; 
-            background-color: var(--bg-deep-space); 
-            color: var(--text-light); 
+            background-color: var(--bg-void); 
+            color: var(--text-main); 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            overflow-x: hidden; 
-            line-height: 1.7; 
-            cursor: none; 
-            -webkit-font-smoothing: antialiased; 
+            overflow: hidden; /* Prevents overall page scroll to act like an app */
+            height: 100vh;
+            height: 100dvh; /* Mobile browser fix */
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-deep-space); }
-        ::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--neon-cyan); }
+        /* Custom scrollbar for inner app panels */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
 
-        /* Hardware Accelerated Canvas */
-        #space-canvas { 
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
-            z-index: -1; will-change: transform; transform: translateZ(0); 
+        /* =========================================
+           2. THE CINEMATIC VIEWPORT (Top Half)
+           ========================================= */
+        .viewport {
+            position: relative;
+            flex: 1; /* Takes up remaining space above the dashboard */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: radial-gradient(circle at bottom center, rgba(255, 94, 0, 0.15) 0%, var(--bg-void) 70%);
+        }
+
+        /* The Massive Glowing Horizon */
+        .planet-horizon {
+            position: absolute;
+            bottom: -50%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200vw;
+            height: 100vw; /* Keeps it perfectly circular based on width */
+            background: #000;
+            border-radius: 50%;
+            box-shadow: 
+                0 -20px 100px 20px var(--brand-orange-glow),
+                inset 0 20px 50px rgba(255, 94, 0, 0.2);
+            border-top: 1px solid rgba(255, 150, 50, 0.8);
+            z-index: 1;
+            transition: box-shadow 1s ease;
+        }
+
+        /* The Center Interaction Pills */
+        .interaction-center {
+            position: absolute;
+            z-index: 10;
+            display: flex;
+            gap: 15px;
+            transform: translateY(20px);
+        }
+
+        .pill {
+            height: 44px;
+            border-radius: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .pill:active { transform: scale(0.95); }
+
+        .pill-glass {
+            width: 80px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: var(--text-muted);
+        }
+        .pill-glass:hover { color: var(--text-main); border-color: rgba(255, 255, 255, 0.3); }
+
+        .pill-solid {
+            padding: 0 40px;
+            background: var(--brand-orange);
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(255, 94, 0, 0.4);
+        }
+        .pill-solid:hover { box-shadow: 0 0 30px rgba(255, 94, 0, 0.6); }
+
+        /* FENIX Logo subtle in viewport */
+        .viewport-brand {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: rgba(255,255,255,0.5);
+            z-index: 10;
         }
 
         /* =========================================
-           2. CUSTOM CURSOR
+           3. THE APP DASHBOARD (Bottom Half)
            ========================================= */
-        .cursor-dot { 
-            width: 6px; height: 6px; background-color: var(--neon-cyan); 
-            position: fixed; left: 0; top: 0; border-radius: 50%; z-index: 99999; 
-            pointer-events: none; transform: translate3d(-50%, -50%, 0); 
-            box-shadow: 0 0 10px var(--neon-cyan); will-change: transform; 
-        }
-        .cursor-outline { 
-            width: 40px; height: 40px; border: 1px solid rgba(189, 0, 255, 0.5); 
-            position: fixed; left: 0; top: 0; border-radius: 50%; z-index: 99999; 
-            pointer-events: none; transform: translate3d(-50%, -50%, 0); 
-            transition: width 0.2s, height 0.2s; will-change: transform; 
-        }
-        @media (hover: none) and (pointer: coarse) { 
-            .cursor-dot, .cursor-outline { display: none !important; } 
-            body { cursor: auto; } 
+        .app-dashboard {
+            height: 50vh; /* Takes exactly half the screen */
+            background: var(--panel-bg);
+            border-radius: 24px 24px 0 0;
+            border-top: 1px solid var(--panel-border);
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
         }
 
-        /* =========================================
-           3. NAVIGATION
-           ========================================= */
-        .navbar { 
-            position: fixed; top: 0; width: 100%; padding: 25px 5vw; 
-            background: transparent; /* Starts transparent */
-            transition: background 0.4s ease, padding 0.4s ease, backdrop-filter 0.4s ease;
-            z-index: 100; box-sizing: border-box; display: flex; 
-            justify-content: center; align-items: center; 
-        }
-        .navbar.scrolled {
-            padding: 15px 5vw;
-            background: rgba(1, 0, 5, 0.8);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--glass-border);
-        }
-        .logo { 
-            font-size: 26px; font-weight: 800; letter-spacing: 5px; 
-            color: var(--text-light); text-transform: uppercase; cursor: pointer;
+        /* Top Control Bar */
+        .dash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
-        /* =========================================
-           4. HERO SECTION
-           ========================================= */
-        .hero { 
-            height: 100vh; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; text-align: center; 
-            padding: 0 5vw; position: relative; 
-            background: radial-gradient(circle at center, rgba(30,10,50,0.4) 0%, transparent 60%); 
+        .search-bar {
+            flex: 1;
+            background: var(--glass);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-right: 20px;
         }
-        .hero-title-container { overflow: hidden; padding-bottom: 10px; }
-        .hero h1 { 
-            font-size: clamp(3rem, 8vw, 6rem); margin: 0; line-height: 1.1; 
-            text-shadow: 0 0 50px rgba(189, 0, 255, 0.3); transform: translateY(100%); 
-            opacity: 0; font-weight: 800; letter-spacing: -1px; will-change: transform, opacity; 
+        .search-bar i { color: var(--text-muted); font-size: 0.9rem; }
+        .search-bar input {
+            background: transparent; border: none; outline: none;
+            color: var(--text-main); width: 100%; font-size: 0.9rem;
         }
-        .hero p { 
-            font-size: clamp(1.1rem, 3vw, 1.5rem); color: var(--text-muted); 
-            margin-top: 25px; letter-spacing: 1px; opacity: 0; max-width: 600px; 
-            font-weight: 300; will-change: opacity; 
-        }
-        .hero-btn-container { opacity: 0; margin-top: 40px; will-change: opacity, transform; }
+        .search-bar input::placeholder { color: var(--text-muted); }
 
-        /* =========================================
-           5. GLOBAL LAYOUT & CARDS
-           ========================================= */
-        section { padding: 150px 5vw; max-width: 1200px; margin: 0 auto; text-align: center; }
-        h2.section-title { 
-            font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 60px; 
-            color: var(--text-light); text-transform: uppercase; 
-            letter-spacing: 4px; font-weight: 700; 
+        .dash-icons { display: flex; gap: 15px; color: var(--text-muted); font-size: 1.2rem; }
+        .dash-icons i { cursor: pointer; transition: color 0.2s; }
+        .dash-icons i:hover { color: var(--text-main); }
+
+        /* App Navigation Tabs */
+        .app-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        .app-tabs::-webkit-scrollbar { display: none; } /* Hides scrollbar for clean look */
+        
+        .tab {
+            padding: 8px 20px;
+            background: var(--glass);
+            border: 1px solid transparent;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+        .tab.active {
+            background: rgba(255, 94, 0, 0.1);
+            border-color: rgba(255, 94, 0, 0.3);
+            color: var(--brand-orange);
+        }
+
+        /* Dynamic Content Area */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
         }
         
-        .glass-grid { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
-        .glass-card { 
-            background: var(--glass-bg); border: 1px solid var(--glass-border); 
-            padding: 50px 30px; border-radius: 20px; flex: 1; 
-            min-width: 280px; max-width: 350px; 
-            transition: var(--transition-smooth); text-align: left; 
-            will-change: transform; transform: translateZ(0); 
-        }
-        .glass-card:hover { 
-            transform: translateY(-10px); border-color: rgba(0, 243, 255, 0.4); 
-            box-shadow: 0 20px 50px rgba(0, 243, 255, 0.05); 
-        }
-        .glass-card h3 { color: var(--text-light); font-size: 1.5rem; margin-top: 0; margin-bottom: 15px; font-weight: 600; }
-        .glass-card p { color: var(--text-muted); font-size: 1.05rem; line-height: 1.8; margin: 0; font-weight: 300; }
-        .glass-card i { font-size: 2.5rem; color: var(--neon-purple); margin-bottom: 25px; display: block; }
-
-        .rise-tagline { 
-            font-size: clamp(2rem, 6vw, 4rem); margin-top: 60px; 
-            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple)); 
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-            line-height: 1.2; font-weight: 800; letter-spacing: -1px; 
-        }
+        .tab-content { display: none; animation: fadeIn 0.4s ease forwards; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* =========================================
-           6. HORIZONTAL PORTFOLIO SCROLL
+           4. INTERNAL TAB DESIGNS (Widgets)
            ========================================= */
-        .horizontal-section { display: flex; flex-direction: column; justify-content: center; overflow: hidden; max-width: 100%; padding-left: 0; padding-right: 0; }
-        .horizontal-container { display: flex; align-items: center; gap: 5vw; will-change: transform; }
-        .horizontal-item { 
-            background: rgba(15, 15, 25, 0.9); border: 1px solid var(--glass-border); 
-            border-radius: 24px; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; flex-shrink: 0; 
-            position: relative; overflow: hidden; transition: border-color 0.4s; 
-            will-change: transform; transform: translateZ(0); 
+        
+        /* Core Info Widget */
+        .info-widget {
+            background: var(--glass);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
         }
-        .horizontal-item:hover { border-color: var(--neon-purple); }
-        .horizontal-item h3 { font-size: clamp(1.8rem, 4vw, 2.5rem); margin: 0; z-index: 2; font-weight: 700; text-shadow: 0 4px 20px rgba(0,0,0,0.8); }
-        .horizontal-item p { color: var(--neon-cyan); letter-spacing: 2px; text-transform: uppercase; z-index: 2; font-size: 0.9rem; margin-top: 10px; font-weight: 600; }
-        .portfolio-bg { 
-            position: absolute; inset: 0; 
-            background: radial-gradient(circle at center, rgba(189,0,255,0.15) 0%, rgba(0,0,0,0.9) 100%); 
-            z-index: 1; transition: transform 0.4s; 
-        }
-        .horizontal-item:hover .portfolio-bg { transform: scale(1.05); }
+        .info-widget h3 { font-size: 1.2rem; margin-bottom: 10px; font-weight: 600; }
+        .info-widget p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
 
-        @media (min-width: 769px) {
-            .horizontal-section { height: 100vh; }
-            .horizontal-container { width: 300vw; height: 60vh; padding-left: 10vw; }
-            .horizontal-item { width: 60vw; height: 50vh; }
+        /* Pricing Grid Widgets */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
+        .price-widget {
+            background: var(--glass);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .price-widget:active { transform: scale(0.95); }
+        .price-widget h4 { font-size: 1rem; color: var(--text-muted); margin-bottom: 10px; font-weight: 500;}
+        .price-widget .cost { font-size: 1.8rem; font-weight: 800; color: var(--text-main); }
+        .price-widget.pro-max {
+            background: linear-gradient(135deg, rgba(255, 94, 0, 0.1), transparent);
+            border-color: rgba(255, 94, 0, 0.3);
+        }
+        .price-widget.pro-max h4 { color: var(--brand-orange); }
+
+        /* Team Roster Widgets */
+        .team-roster { display: flex; flex-direction: column; gap: 10px; }
+        .team-row {
+            display: flex; align-items: center; gap: 15px;
+            background: var(--glass); padding: 15px; border-radius: 12px;
+        }
+        .team-avatar { width: 40px; height: 40px; border-radius: 50%; background: #222; display: flex; justify-content: center; align-items: center; color: var(--brand-orange); }
+        .team-details h4 { font-size: 0.95rem; margin-bottom: 3px; }
+        .team-details p { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* =========================================
+           5. MOBILE OPTIMIZATIONS
+           ========================================= */
         @media (max-width: 768px) {
-            .horizontal-section { height: auto; padding: 100px 5vw; }
-            .horizontal-container { flex-direction: column; width: 100%; gap: 30px; }
-            .horizontal-item { width: 100%; height: 350px; }
-        }
-
-        /* =========================================
-           7. PRICING & MODAL
-           ========================================= */
-        .price-card { text-align: center; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; }
-        .price-card:hover { border-color: var(--neon-purple); box-shadow: 0 15px 40px rgba(189, 0, 255, 0.15); }
-        .price-amount { font-size: 3.5rem; font-weight: 800; margin: 20px 0; color: var(--text-light); letter-spacing: -2px; }
-
-        .modal-overlay { 
-            display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); 
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); 
-            z-index: 10000; justify-content: center; align-items: center; 
-            opacity: 0; transition: opacity 0.3s ease; padding: 20px; 
-        }
-        .modal-overlay.active { display: flex; opacity: 1; }
-        .modal-content { 
-            background: linear-gradient(145deg, rgba(15,10,25,0.95), rgba(5,2,10,0.95)); 
-            border: 1px solid rgba(189, 0, 255, 0.4); padding: 50px 40px; 
-            border-radius: 24px; max-width: 500px; width: 100%; text-align: center; 
-            position: relative; transform: translateY(50px) scale(0.95); 
-            transition: var(--transition-smooth); box-sizing: border-box; 
-        }
-        .modal-overlay.active .modal-content { transform: translateY(0) scale(1); }
-        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 40px; cursor: pointer; color: #666; transition: color 0.2s; line-height: 1; }
-        .close-btn:hover { color: var(--text-light); }
-        
-        #modal-title { font-size: 2rem; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 3px; color: var(--neon-cyan); font-weight: 800; }
-        #modal-price { font-size: 3rem; color: var(--text-light); margin: 0 0 20px 0; font-weight: 800; letter-spacing: -2px; }
-        #modal-desc { font-size: 1.1rem; color: #b0b0c0; line-height: 1.8; margin-bottom: 40px; font-weight: 300; }
-        
-        /* =========================================
-           8. BUTTONS & UTILITIES
-           ========================================= */
-        .magnetic-btn { 
-            display: inline-block; padding: 18px 45px; 
-            background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan)); 
-            color: var(--text-light); text-decoration: none; font-weight: 700; 
-            font-size: 1.1rem; border-radius: 40px; border: none; cursor: pointer; 
-            z-index: 10; transition: box-shadow 0.3s; text-transform: uppercase; 
-            letter-spacing: 1px; will-change: transform; 
-        }
-        .magnetic-btn:hover { box-shadow: 0 0 30px rgba(0, 243, 255, 0.5); }
-
-        .floating-contact { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 9999; }
-        .float-btn { 
-            width: 60px; height: 60px; border-radius: 50%; display: flex; 
-            justify-content: center; align-items: center; text-decoration: none; 
-            color: white; font-size: 28px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); 
-            transition: transform 0.2s; border: 1px solid var(--glass-border); 
-        }
-        .float-btn:hover { transform: scale(1.1); border-color: var(--neon-cyan); }
-        .call-btn { background-color: var(--neon-cyan); color: #000; }
-        .wa-btn { background-color: #25D366; }
-
-        .reveal { opacity: 0; transform: translateY(40px); will-change: opacity, transform; }
-
-        @media (max-width: 768px) {
-            section { padding: 100px 5vw; }
-            .floating-contact { bottom: 20px; right: 20px; }
-            .float-btn { width: 55px; height: 55px; font-size: 24px; }
-            .modal-content { padding: 40px 20px; }
+            .app-dashboard { height: 60vh; /* Gives more room for content on small screens */ }
+            .planet-horizon { width: 300vw; height: 150vw; bottom: -60%; }
+            .pricing-grid { grid-template-columns: 1fr; } /* Stacks pricing on mobile */
         }
     </style>
 </head>
 <body>
 
-    <div class="cursor-dot"></div>
-    <div class="cursor-outline"></div>
-    <canvas id="space-canvas"></canvas>
-    
-    <nav class="navbar" id="main-nav"><div class="logo">FENIX</div></nav>
+    <div class="viewport">
+        <div class="viewport-brand">FENIX</div>
+        
+        <div class="planet-horizon" id="planet"></div>
 
-    <header class="hero">
-        <div class="hero-title-container"><h1 class="hero-text">Digital Reality,</h1></div>
-        <div class="hero-title-container"><h1 class="hero-text">Architected by AI.</h1></div>
-        <p class="hero-subtext">Next-generation web customization for elite brands.</p>
-        <div class="hero-btn-container">
-            <a href="#pricing" class="magnetic-btn">View Intelligence</a>
-        </div>
-    </header>
-
-    <section id="about">
-        <h2 class="section-title reveal">The Syndicate</h2>
-        <div class="glass-grid reveal">
-            <div class="glass-card">
-                <i class="fas fa-chess-king"></i>
-                <h3>Shiva Kumar</h3>
-                <p>Senior Marketing Head. Driving strategy, brand positioning, and the ultimate vision.</p>
+        <div class="interaction-center">
+            <div class="pill pill-glass" onclick="triggerScan()" title="Analyze System">
+                <i class="fas fa-play" id="play-icon"></i>
             </div>
-            <div class="glass-card">
-                <i class="fas fa-code-branch"></i>
-                <h3>Pruvthi & Arvind</h3>
-                <p>Tech Experts. Architecting flawless, high-performance web infrastructure.</p>
+            <div class="pill pill-solid" onclick="window.open('https://wa.me/917995313645', '_blank')">
+                INITIATE
             </div>
-            <div class="glass-card">
-                <i class="fas fa-paint-brush"></i>
-                <h3>Akhil</h3>
-                <p>Design & Social Media. Crafting pixel-perfect aesthetics.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="horizontal-section" id="work">
-        <h2 class="section-title reveal" style="margin-bottom: 40px;">Digital Archives</h2>
-        <div class="horizontal-container">
-            <div class="horizontal-item item-reveal">
-                <div class="portfolio-bg"></div>
-                <h3>Aethera</h3><p>3D Interaction</p>
-            </div>
-            <div class="horizontal-item item-reveal">
-                <div class="portfolio-bg"></div>
-                <h3>Saratoga</h3><p>Fluid Animation</p>
-            </div>
-            <div class="horizontal-item item-reveal">
-                <div class="portfolio-bg"></div>
-                <h3>Vibram</h3><p>E-Commerce Tech</p>
-            </div>
-            <div class="horizontal-item item-reveal">
-                <div class="portfolio-bg"></div>
-                <h3>Ferrari</h3><p>WebGL Configurator</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="pricing">
-        <h2 class="section-title reveal">Investment Tiers</h2>
-        <div class="glass-grid reveal">
-            <div class="glass-card price-card" onclick="openModal('BASIC')">
-                <div><h3>Basic</h3><p style="margin-bottom: 20px;">Essential digital presence.</p></div>
-                <div><p class="price-amount">₹60K</p><span style="color:var(--neon-cyan); font-size:0.8rem; text-transform:uppercase; font-weight: bold;">Initialize</span></div>
-            </div>
-            <div class="glass-card price-card" onclick="openModal('ELITE')">
-                <div><h3>Elite</h3><p style="margin-bottom: 20px;">Advanced scalable design.</p></div>
-                <div><p class="price-amount">₹80K</p><span style="color:var(--neon-cyan); font-size:0.8rem; text-transform:uppercase; font-weight: bold;">Initialize</span></div>
-            </div>
-            <div class="glass-card price-card" onclick="openModal('MASTER')">
-                <div><h3>Master</h3><p style="margin-bottom: 20px;">Premium interactive tech.</p></div>
-                <div><p class="price-amount">₹1.2L</p><span style="color:var(--neon-cyan); font-size:0.8rem; text-transform:uppercase; font-weight: bold;">Initialize</span></div>
-            </div>
-            <div class="glass-card price-card" onclick="openModal('PRO MAX')" style="border-color: rgba(189, 0, 255, 0.4); background: rgba(25, 10, 35, 0.9);">
-                <div><i class="fas fa-crown" style="font-size: 1.5rem; color:var(--neon-purple); margin-bottom:15px;"></i><h3>Pro Max</h3><p style="margin-bottom: 20px;">Ultimate brand dominance.</p></div>
-                <div><p class="price-amount">₹2.2L</p><span style="color:var(--neon-cyan); font-size:0.8rem; text-transform:uppercase; font-weight: bold;">Initialize</span></div>
-            </div>
-        </div>
-        <div class="reveal">
-            <h3 class="rise-tagline">We don’t just build brands — we help them rise.</h3>
-        </div>
-    </section>
-
-    <div id="pricing-modal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <h2 id="modal-title">Package</h2>
-            <h3 id="modal-price">₹0</h3>
-            <p id="modal-desc">Details</p>
-            <a href="#" target="_blank" class="magnetic-btn modal-cta-btn" style="width: 100%; box-sizing: border-box;">Initiate Sequence</a>
         </div>
     </div>
 
-    <div class="floating-contact">
-        <a href="tel:+917995313645" class="float-btn call-btn"><i class="fas fa-phone"></i></a>
-        <a href="https://wa.me/917995313645" target="_blank" class="float-btn wa-btn"><i class="fab fa-whatsapp"></i></a>
+    <div class="app-dashboard">
+        
+        <div class="dash-header">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search FENIX Database...">
+            </div>
+            <div class="dash-icons">
+                <i class="far fa-bell"></i>
+                <i class="far fa-user-circle"></i>
+            </div>
+        </div>
+
+        <div class="app-tabs">
+            <div class="tab active" onclick="switchTab('overview')">Overview</div>
+            <div class="tab" onclick="switchTab('investment')">Investment Tiers</div>
+            <div class="tab" onclick="switchTab('syndicate')">The Syndicate</div>
+        </div>
+
+        <div class="content-area">
+            
+            <div id="overview" class="tab-content active">
+                <div class="info-widget">
+                    <h3>Digital Reality, Architected.</h3>
+                    <p>FENIX is a dynamic startup based in Nalgonda, driven by innovation, creativity, and results. We specialize in next-generation website customization and AI design for elite brands.</p>
+                </div>
+                <div class="info-widget">
+                    <h3>System Status</h3>
+                    <p style="display: flex; align-items: center; gap: 8px; color: #4ade80;">
+                        <i class="fas fa-circle" style="font-size: 10px;"></i> All systems nominal. Ready for deployment.
+                    </p>
+                </div>
+            </div>
+
+            <div id="investment" class="tab-content">
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Select a tier to initiate sequence.</p>
+                <div class="pricing-grid">
+                    <div class="price-widget" onclick="window.open('https://wa.me/917995313645?text=Hi%20FENIX,%20I%20want%20the%20Basic%20Package', '_blank')">
+                        <h4>Basic</h4>
+                        <div class="cost">₹60k</div>
+                    </div>
+                    <div class="price-widget" onclick="window.open('https://wa.me/917995313645?text=Hi%20FENIX,%20I%20want%20the%20Elite%20Package', '_blank')">
+                        <h4>Elite</h4>
+                        <div class="cost">₹80k</div>
+                    </div>
+                    <div class="price-widget" onclick="window.open('https://wa.me/917995313645?text=Hi%20FENIX,%20I%20want%20the%20Master%20Package', '_blank')">
+                        <h4>Master</h4>
+                        <div class="cost">₹1.2L</div>
+                    </div>
+                    <div class="price-widget pro-max" onclick="window.open('https://wa.me/917995313645?text=Hi%20FENIX,%20I%20want%20the%20Pro%20Max%20Package', '_blank')">
+                        <h4><i class="fas fa-crown"></i> Pro Max</h4>
+                        <div class="cost">₹2.2L</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="syndicate" class="tab-content">
+                <div class="team-roster">
+                    <div class="team-row">
+                        <div class="team-avatar"><i class="fas fa-chess-king"></i></div>
+                        <div class="team-details">
+                            <h4>Shiva Kumar</h4>
+                            <p>Senior Marketing Head</p>
+                        </div>
+                    </div>
+                    <div class="team-row">
+                        <div class="team-avatar"><i class="fas fa-code-branch"></i></div>
+                        <div class="team-details">
+                            <h4>Pruvthi & Arvind</h4>
+                            <p>Tech Infrastructure</p>
+                        </div>
+                    </div>
+                    <div class="team-row">
+                        <div class="team-avatar"><i class="fas fa-paint-brush"></i></div>
+                        <div class="team-details">
+                            <h4>Akhil</h4>
+                            <p>Design & Media</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    
     <script>
-        // 1. DYNAMIC NAVBAR SCRIPT
-        const nav = document.getElementById('main-nav');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) { nav.classList.add('scrolled'); } 
-            else { nav.classList.remove('scrolled'); }
-        });
-
-        // 2. GSAP INITIALIZATION
-        gsap.registerPlugin(ScrollTrigger);
-
-        window.addEventListener("load", () => {
-            const tl = gsap.timeline();
-            tl.to(".hero-text", { y: "0%", opacity: 1, duration: 1, stagger: 0.15, ease: "power3.out" })
-              .to(".hero-subtext", { opacity: 1, duration: 0.8, ease: "power2.out" }, "-=0.5")
-              .to(".hero-btn-container", { opacity: 1, y: -10, duration: 0.6, ease: "power2.out" }, "-=0.5");
-        });
-
-        let mm = gsap.matchMedia();
-
-        mm.add("(min-width: 769px)", () => {
-            const horizontalContainer = document.querySelector(".horizontal-container");
-            gsap.to(horizontalContainer, {
-                x: () => -(horizontalContainer.scrollWidth - window.innerWidth) + "px",
-                ease: "none",
-                scrollTrigger: { 
-                    trigger: ".horizontal-section", pin: true, scrub: 0.5, 
-                    end: () => "+=" + horizontalContainer.scrollWidth, invalidateOnRefresh: true
-                }
-            });
-        });
-
-        mm.add("(max-width: 768px)", () => {
-            gsap.utils.toArray('.item-reveal').forEach(item => {
-                gsap.fromTo(item, 
-                    { opacity: 0, y: 30 },
-                    { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", scrollTrigger: { trigger: item, start: "top 85%" } }
-                );
-            });
-        });
-
-        gsap.utils.toArray('.reveal').forEach(element => {
-            gsap.to(element, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: element, start: "top 85%" } });
-        });
-
-        // 3. HARDWARE-ACCELERATED CURSOR & BUTTONS (Desktop Only)
-        if (window.innerWidth > 768) {
-            const cursorDot = document.querySelector('.cursor-dot');
-            const cursorOutline = document.querySelector('.cursor-outline');
+        // 1. Tab Switching Logic for the App Dashboard
+        function switchTab(tabId) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             
-            window.addEventListener('mousemove', (e) => {
-                cursorDot.style.transform = `translate3d(calc(${e.clientX}px - 50%), calc(${e.clientY}px - 50%), 0)`;
-                cursorOutline.style.transform = `translate3d(calc(${e.clientX}px - 50%), calc(${e.clientY}px - 50%), 0)`;
-            }, { passive: true });
-
-            const magneticBtns = document.querySelectorAll('.magnetic-btn');
-            magneticBtns.forEach(btn => {
-                btn.addEventListener('mousemove', (e) => {
-                    const position = btn.getBoundingClientRect();
-                    const x = e.clientX - position.left - position.width / 2;
-                    const y = e.clientY - position.top - position.height / 2;
-                    btn.style.transform = `translate3d(${x * 0.3}px, ${y * 0.4}px, 0)`;
-                });
-                btn.addEventListener('mouseout', () => { btn.style.transform = 'translate3d(0px, 0px, 0)'; });
-            });
-        }
-
-        // 4. DEBOUNCED STARFIELD ENGINE (Eliminates mobile resize lag)
-        const canvas = document.getElementById('space-canvas');
-        const ctx = canvas.getContext('2d', { alpha: false });
-        let width, height, stars = [];
-        let resizeTimeout;
-        
-        function initStars() {
-            width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight;
-            stars = [];
-            const numStars = width < 768 ? 200 : 500; 
-            for (let i = 0; i < numStars; i++) { stars.push({ x: Math.random() * width - width / 2, y: Math.random() * height - height / 2, z: Math.random() * width }); }
-        }
-        
-        function animateStars() {
-            ctx.fillStyle = '#010005'; ctx.fillRect(0, 0, width, height);
-            const cx = width / 2; const cy = height / 2;
+            // Add active class to clicked tab (find by text content match or event target)
+            event.currentTarget.classList.add('active');
             
-            stars.forEach(star => {
-                star.z -= 0.8; 
-                if (star.z <= 0) { star.x = Math.random() * width - cx; star.y = Math.random() * height - cy; star.z = width; }
-                const x = cx + star.x * (width / star.z); const y = cy + star.y * (width / star.z);
-                const size = (1 - star.z / width) * 3;
-                
-                if (Math.random() > 0.95) ctx.fillStyle = '#00f3ff'; else if (Math.random() > 0.85) ctx.fillStyle = '#bd00ff'; else ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                ctx.fillRect(x, y, size, size);
-            });
-            requestAnimationFrame(animateStars);
+            // Show corresponding content
+            document.getElementById(tabId).classList.add('active');
         }
 
-        // The Debounce function stops the canvas from redrawing a million times while resizing
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(initStars, 200);
-        }, { passive: true });
-        
-        initStars(); animateStars();
-
-        // 5. MODAL DATA ENGINE
-        const packageData = {
-            'BASIC': { price: '₹60K', desc: 'Perfect for startups starting their digital journey. Essential branding and basic setup.' },
-            'ELITE': { price: '₹80K', desc: 'Designed for growing businesses ready to scale. Advanced design and optimized performance.' },
-            'MASTER': { price: '₹1.2L', desc: 'Built for brands aiming for strong market positioning. Premium design and tech solutions.' },
-            'PRO MAX': { price: '₹2.2L', desc: 'The ultimate package. Full-scale branding, cutting-edge development, and aggressive marketing.' }
-        };
-        
-        function openModal(tier) {
-            document.getElementById('modal-title').innerText = tier;
-            document.getElementById('modal-price').innerText = packageData[tier].price;
-            document.getElementById('modal-desc').innerText = packageData[tier].desc;
-            document.querySelector('.modal-cta-btn').setAttribute('href', `https://wa.me/917995313645?text=Hi%20FENIX,%20I%20am%20interested%20in%20the%20${tier}%20Package.`);
+        // 2. Interactive "Play" Button Logic
+        function triggerScan() {
+            const icon = document.getElementById('play-icon');
+            const planet = document.getElementById('planet');
             
-            const modal = document.getElementById('pricing-modal');
-            modal.style.display = 'flex';
-            setTimeout(() => { modal.classList.add('active'); }, 10);
-        }
-        
-        function closeModal() {
-            const modal = document.getElementById('pricing-modal');
-            modal.classList.remove('active');
-            setTimeout(() => { modal.style.display = 'none'; }, 300);
+            // Change icon to spinner
+            icon.className = 'fas fa-spinner fa-spin';
+            
+            // Make the planet glow surge
+            planet.style.boxShadow = '0 -20px 150px 40px rgba(255, 94, 0, 0.8), inset 0 20px 50px rgba(255, 94, 0, 0.4)';
+            
+            // Reset after 1.5 seconds
+            setTimeout(() => {
+                icon.className = 'fas fa-play';
+                planet.style.boxShadow = '0 -20px 100px 20px rgba(255, 94, 0, 0.5), inset 0 20px 50px rgba(255, 94, 0, 0.2)';
+            }, 1500);
         }
     </script>
 </body>
