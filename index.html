@@ -2,404 +2,82 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FENIX | OS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FENIX | Next-Gen AI Architecture</title>
     
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-        /* =========================================
-           1. CORE APP VARIABLES & RESET
-           ========================================= */
-        :root {
-            --bg-void: #0a0a0c;
-            --brand-orange: #ff5e00;
-            --brand-orange-glow: rgba(255, 94, 0, 0.5);
-            --panel-bg: #141416;
-            --panel-border: rgba(255, 255, 255, 0.05);
-            --text-main: #ffffff;
-            --text-muted: #8a8a93;
-            --glass: rgba(255, 255, 255, 0.05);
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body { 
-            background-color: var(--bg-void); 
-            color: var(--text-main); 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            overflow: hidden; /* Prevents overall page scroll to act like an app */
-            height: 100vh;
-            height: 100dvh; /* Mobile browser fix */
-            display: flex;
-            flex-direction: column;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Custom scrollbar for inner app panels */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-
-        /* =========================================
-           2. THE CINEMATIC VIEWPORT (Top Half)
-           ========================================= */
-        .viewport {
-            position: relative;
-            flex: 1; /* Takes up remaining space above the dashboard */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            background: radial-gradient(circle at bottom center, rgba(255, 94, 0, 0.15) 0%, var(--bg-void) 70%);
-        }
-
-        /* The Massive Glowing Horizon */
-        .planet-horizon {
-            position: absolute;
-            bottom: -50%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200vw;
-            height: 100vw; /* Keeps it perfectly circular based on width */
-            background: #000;
-            border-radius: 50%;
-            box-shadow: 
-                0 -20px 100px 20px var(--brand-orange-glow),
-                inset 0 20px 50px rgba(255, 94, 0, 0.2);
-            border-top: 1px solid rgba(255, 150, 50, 0.8);
-            z-index: 1;
-            transition: box-shadow 1s ease;
-        }
-
-        /* The Center Interaction Pills */
-        .interaction-center {
-            position: absolute;
-            z-index: 10;
-            display: flex;
-            gap: 15px;
-            transform: translateY(20px);
-        }
-
-        .pill {
-            height: 44px;
-            border-radius: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .pill:active { transform: scale(0.95); }
-
-        .pill-glass {
-            width: 80px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            color: var(--text-muted);
-        }
-        .pill-glass:hover { color: var(--text-main); border-color: rgba(255, 255, 255, 0.3); }
-
-        .pill-solid {
-            padding: 0 40px;
-            background: var(--brand-orange);
-            color: #fff;
-            font-weight: 700;
-            letter-spacing: 1px;
-            box-shadow: 0 0 20px rgba(255, 94, 0, 0.4);
-        }
-        .pill-solid:hover { box-shadow: 0 0 30px rgba(255, 94, 0, 0.6); }
-
-        /* FENIX Logo subtle in viewport */
-        .viewport-brand {
-            position: absolute;
-            top: 30px;
-            left: 30px;
-            font-size: 1.2rem;
-            font-weight: 800;
-            letter-spacing: 4px;
-            color: rgba(255,255,255,0.5);
-            z-index: 10;
-        }
-
-        /* =========================================
-           3. THE APP DASHBOARD (Bottom Half)
-           ========================================= */
-        .app-dashboard {
-            height: 50vh; /* Takes exactly half the screen */
-            background: var(--panel-bg);
-            border-radius: 24px 24px 0 0;
-            border-top: 1px solid var(--panel-border);
-            z-index: 20;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
-        }
-
-        /* Top Control Bar */
-        .dash-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .search-bar {
-            flex: 1;
-            background: var(--glass);
-            border: 1px solid var(--panel-border);
-            border-radius: 12px;
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-right: 20px;
-        }
-        .search-bar i { color: var(--text-muted); font-size: 0.9rem; }
-        .search-bar input {
-            background: transparent; border: none; outline: none;
-            color: var(--text-main); width: 100%; font-size: 0.9rem;
-        }
-        .search-bar input::placeholder { color: var(--text-muted); }
-
-        .dash-icons { display: flex; gap: 15px; color: var(--text-muted); font-size: 1.2rem; }
-        .dash-icons i { cursor: pointer; transition: color 0.2s; }
-        .dash-icons i:hover { color: var(--text-main); }
-
-        /* App Navigation Tabs */
-        .app-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-        }
-        .app-tabs::-webkit-scrollbar { display: none; } /* Hides scrollbar for clean look */
-        
-        .tab {
-            padding: 8px 20px;
-            background: var(--glass);
-            border: 1px solid transparent;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.3s;
-        }
-        .tab.active {
-            background: rgba(255, 94, 0, 0.1);
-            border-color: rgba(255, 94, 0, 0.3);
-            color: var(--brand-orange);
-        }
-
-        /* Dynamic Content Area */
-        .content-area {
-            flex: 1;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-        
-        .tab-content { display: none; animation: fadeIn 0.4s ease forwards; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* =========================================
-           4. INTERNAL TAB DESIGNS (Widgets)
-           ========================================= */
-        
-        /* Core Info Widget */
-        .info-widget {
-            background: var(--glass);
-            border: 1px solid var(--panel-border);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 15px;
-        }
-        .info-widget h3 { font-size: 1.2rem; margin-bottom: 10px; font-weight: 600; }
-        .info-widget p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
-
-        /* Pricing Grid Widgets */
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        .price-widget {
-            background: var(--glass);
-            border: 1px solid var(--panel-border);
-            border-radius: 16px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex; flex-direction: column; justify-content: space-between;
-        }
-        .price-widget:active { transform: scale(0.95); }
-        .price-widget h4 { font-size: 1rem; color: var(--text-muted); margin-bottom: 10px; font-weight: 500;}
-        .price-widget .cost { font-size: 1.8rem; font-weight: 800; color: var(--text-main); }
-        .price-widget.pro-max {
-            background: linear-gradient(135deg, rgba(255, 94, 0, 0.1), transparent);
-            border-color: rgba(255, 94, 0, 0.3);
-        }
-        .price-widget.pro-max h4 { color: var(--brand-orange); }
-
-        /* Team Roster Widgets */
-        .team-roster { display: flex; flex-direction: column; gap: 10px; }
-        .team-row {
-            display: flex; align-items: center; gap: 15px;
-            background: var(--glass); padding: 15px; border-radius: 12px;
-        }
-        .team-avatar { width: 40px; height: 40px; border-radius: 50%; background: #222; display: flex; justify-content: center; align-items: center; color: var(--brand-orange); }
-        .team-details h4 { font-size: 0.95rem; margin-bottom: 3px; }
-        .team-details p { font-size: 0.8rem; color: var(--text-muted); }
-
-        /* =========================================
-           5. MOBILE OPTIMIZATIONS
-           ========================================= */
-        @media (max-width: 768px) {
-            .app-dashboard { height: 60vh; /* Gives more room for content on small screens */ }
-            .planet-horizon { width: 300vw; height: 150vw; bottom: -60%; }
-            .pricing-grid { grid-template-columns: 1fr; } /* Stacks pricing on mobile */
-        }
-    </style>
 </head>
 <body>
 
-    <div class="viewport">
-        <div class="viewport-brand">FENIX</div>
-        
-        <div class="planet-horizon" id="planet"></div>
+    <canvas id="particle-canvas"></canvas>
 
-        <div class="interaction-center">
-            <div class="pill pill-glass" onclick="triggerScan()" title="Analyze System">
-                <i class="fas fa-play" id="play-icon"></i>
+    <nav class="navbar">
+        <div class="logo">FENIX</div>
+        <div class="nav-links">
+            <a href="#services">Capabilities</a>
+            <a href="#pricing">Investment</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Architecting<br>Digital Reality.</h1>
+            <p class="hero-subtitle">Elite web customization driven by artificial intelligence.</p>
+        </div>
+    </header>
+
+    <section class="syndicate">
+        <h2 class="section-title">The Syndicate</h2>
+        <div class="card-grid">
+            <div class="glass-card">
+                <i class="fas fa-chess-king"></i>
+                <h3>Shiva Kumar</h3>
+                <p>Senior Marketing Head</p>
             </div>
-            <div class="pill pill-solid" onclick="window.open('https://wa.me/917995313645', '_blank')">
-                INITIATE
+            <div class="glass-card">
+                <i class="fas fa-code-branch"></i>
+                <h3>Pruvthi & Arvind</h3>
+                <p>Tech Infrastructure</p>
+            </div>
+            <div class="glass-card">
+                <i class="fas fa-paint-brush"></i>
+                <h3>Akhil</h3>
+                <p>Design & Media</p>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="app-dashboard">
-        
-        <div class="dash-header">
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search FENIX Database...">
+    <section id="pricing" class="pricing">
+        <h2 class="section-title">Investment Tiers</h2>
+        <div class="card-grid">
+            <div class="glass-card price-card">
+                <h3>Basic</h3>
+                <div class="price">₹60K</div>
+                <a href="https://wa.me/917995313645" class="action-btn">Initiate</a>
             </div>
-            <div class="dash-icons">
-                <i class="far fa-bell"></i>
-                <i class="far fa-user-circle"></i>
+            <div class="glass-card price-card">
+                <h3>Elite</h3>
+                <div class="price">₹80K</div>
+                <a href="https://wa.me/917995313645" class="action-btn">Initiate</a>
+            </div>
+            <div class="glass-card price-card">
+                <h3>Master</h3>
+                <div class="price">₹1.2L</div>
+                <a href="https://wa.me/917995313645" class="action-btn">Initiate</a>
+            </div>
+            <div class="glass-card price-card pro-max">
+                <h3><i class="fas fa-crown"></i> Pro Max</h3>
+                <div class="price">₹2.2L</div>
+                <a href="https://wa.me/917995313645" class="action-btn">Initiate</a>
             </div>
         </div>
+    </section>
 
-        <div class="app-tabs">
-            <div class="tab active" onclick="switchTab('overview')">Overview</div>
-            <div class="tab" onclick="switchTab('investment')">Investment Tiers</div>
-            <div class="tab" onclick="switchTab('syndicate')">The Syndicate</div>
-        </div>
-
-        <div class="content-area">
-            
-            <div id="overview" class="tab-content active">
-                <div class="info-widget">
-                    <h3>Digital Reality, Architected.</h3>
-                    <p>FENIX is a dynamic startup based in Nalgonda, driven by innovation, creativity, and results. We specialize in next-generation website customization and AI design for elite brands.</p>
-                </div>
-                <div class="info-widget">
-                    <h3>System Status</h3>
-                    <p style="display: flex; align-items: center; gap: 8px; color: #4ade80;">
-                        <i class="fas fa-circle" style="font-size: 10px;"></i> All systems nominal. Ready for deployment.
-                    </p>
-                </div>
-            </div>
-
-            <div id="investment" class="tab-content">
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Select a tier to initiate sequence.</p>
-                <div class="pricing-grid">
-                    <div class="price-widget" onclick="window.open('https://wa.me/917995313645?text=Hi%20FENIX,%20I%20want%20the%20Basic%20Package', '_blank')">
-                        <h4>Basic</h4>
-                        <div class="cost">₹60k</div>
-                    </div>
-                    <div class="price-widget" onclick="window.open('https://wa.me/917995313645?text=Hi%20FENIX,%20I%20want%20the%20Elite%20Package', '_blank')">
-                        <h4>Elite</h4>
-                        <div class="cost">₹80k</div>
-                    </div>
-                    <div class="price-widget" onclick="window.open('https://wa.me/917995313645?text=Hi%20FENIX,%20I%20want%20the%20Master%20Package', '_blank')">
-                        <h4>Master</h4>
-                        <div class="cost">₹1.2L</div>
-                    </div>
-                    <div class="price-widget pro-max" onclick="window.open('https://wa.me/917995313645?text=Hi%20FENIX,%20I%20want%20the%20Pro%20Max%20Package', '_blank')">
-                        <h4><i class="fas fa-crown"></i> Pro Max</h4>
-                        <div class="cost">₹2.2L</div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="syndicate" class="tab-content">
-                <div class="team-roster">
-                    <div class="team-row">
-                        <div class="team-avatar"><i class="fas fa-chess-king"></i></div>
-                        <div class="team-details">
-                            <h4>Shiva Kumar</h4>
-                            <p>Senior Marketing Head</p>
-                        </div>
-                    </div>
-                    <div class="team-row">
-                        <div class="team-avatar"><i class="fas fa-code-branch"></i></div>
-                        <div class="team-details">
-                            <h4>Pruvthi & Arvind</h4>
-                            <p>Tech Infrastructure</p>
-                        </div>
-                    </div>
-                    <div class="team-row">
-                        <div class="team-avatar"><i class="fas fa-paint-brush"></i></div>
-                        <div class="team-details">
-                            <h4>Akhil</h4>
-                            <p>Design & Media</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <script>
-        // 1. Tab Switching Logic for the App Dashboard
-        function switchTab(tabId) {
-            // Remove active class from all tabs
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
-            // Add active class to clicked tab (find by text content match or event target)
-            event.currentTarget.classList.add('active');
-            
-            // Show corresponding content
-            document.getElementById(tabId).classList.add('active');
-        }
-
-        // 2. Interactive "Play" Button Logic
-        function triggerScan() {
-            const icon = document.getElementById('play-icon');
-            const planet = document.getElementById('planet');
-            
-            // Change icon to spinner
-            icon.className = 'fas fa-spinner fa-spin';
-            
-            // Make the planet glow surge
-            planet.style.boxShadow = '0 -20px 150px 40px rgba(255, 94, 0, 0.8), inset 0 20px 50px rgba(255, 94, 0, 0.4)';
-            
-            // Reset after 1.5 seconds
-            setTimeout(() => {
-                icon.className = 'fas fa-play';
-                planet.style.boxShadow = '0 -20px 100px 20px rgba(255, 94, 0, 0.5), inset 0 20px 50px rgba(255, 94, 0, 0.2)';
-            }, 1500);
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <script src="js/app.js"></script>
 </body>
 </html>
